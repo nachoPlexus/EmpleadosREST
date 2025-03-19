@@ -1,62 +1,52 @@
 package com.plexus.directory.web;
 
-import com.plexus.directory.domain.Employee;
-import com.plexus.directory.service.EmployeeService;
-import org.springframework.http.HttpStatus;
+import com.plexus.directory.domain.dto.EmployeeDTO;
+import com.plexus.directory.domain.dto.EmployeePageResponse;
+import com.plexus.directory.facade.EmployeeFacade;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8080")
 @RequestMapping("/employees")
 public class EmployeeController {
-    private final EmployeeService service;
+    private final EmployeeFacade facade;
 
-    public EmployeeController(EmployeeService service) {
-        this.service = service;
+    public EmployeeController(EmployeeFacade facade) {
+        this.facade = facade;
     }
 
-    //GET /employees
     @GetMapping
-    public List<Employee> getEmployees(){
-        return service.getAll();
+    public ResponseEntity<EmployeePageResponse> getEmployees(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return facade.getEmployeesPaged(page, size);
     }
 
-    //GET /employees/id/{id}
-    @GetMapping
-    @RequestMapping("/id/{employeeId}")
-    private Employee getEmployeeById(@PathVariable int employeeId){
-        return service.getById(employeeId);
+    @GetMapping("/id/{employeeId}")
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable int employeeId) {
+        return facade.getEmployeeById(employeeId);
     }
 
-    //GET /employees/name/{name}
-    @GetMapping
-    @RequestMapping("/name/{employeeName}")
-    private Employee getEmployeeByName(@PathVariable String employeeName){
-        return service.getByName(employeeName);
+    @GetMapping("/name/{employeeName}")
+    public ResponseEntity<EmployeePageResponse> getEmployeesByName(@PathVariable String employeeName) {
+        return facade.getEmployeesByName(employeeName);
     }
 
     @PostMapping
-    public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
-        return service.save(employee) > 0 ? ResponseEntity.status(HttpStatus.CREATED).body("Employee created successfully")
-            : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There is no way anyone can read this text");
+    public ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeDTO employee) {
+        return facade.createEmployee(employee);
     }
 
     @PutMapping
-    public ResponseEntity<String> updateEmployee(@RequestBody Employee employee) {
-        int updated = service.update(employee);
-        return updated > 0 ? ResponseEntity.ok("Employee updated successfully")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There is no way anyone can read this text");
+    public ResponseEntity<String> updateEmployee(@Valid @RequestBody EmployeeDTO employee) {
+        return facade.updateEmployee(employee);
     }
 
     @DeleteMapping("/{employeeId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable int employeeId) {
-        Employee employee = service.getById(employeeId);
-        if (employee != null && service.delete(employee)) {
-            return ResponseEntity.ok("Employee deleted successfully");
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There is no way anyone can read this text");
+        return facade.deleteEmployee(employeeId);
     }
 }
+

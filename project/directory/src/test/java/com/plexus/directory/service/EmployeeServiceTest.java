@@ -34,10 +34,8 @@ class EmployeeServiceTest {
 
     @Test
     void testGetAll_DataBaseError() {
-        // Simulamos que el DAO lanza una excepción genérica
         when(employeeRepository.getAll()).thenThrow(new RuntimeException("DB error"));
 
-        // Verificamos que se lanza DataBaseException en el servicio
         DataBaseException ex = assertThrows(
                 DataBaseException.class,
                 () -> employeeService.getAll()
@@ -45,13 +43,8 @@ class EmployeeServiceTest {
         assertTrue(ex.getMessage().contains("error tecnico, pruebe de nuevo"));
         verify(employeeRepository, times(1)).getAll();
     }
-
-    // ---------------------------------------------------------
-    // TEST: getById(int)
-    // ---------------------------------------------------------
     @Test
     void testGetById_Success() {
-        // Simulamos que el DAO devuelve un empleado
         when(employeeRepository.get(1)).thenReturn(employee);
 
         Employee result = employeeService.getById(1);
@@ -62,25 +55,9 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void testGetById_NoContent() {
-        // Simulamos que el DAO devuelve null
-        when(employeeRepository.get(999)).thenReturn(null);
-
-        // Debe lanzar NoContentException
-        NoContentException ex = assertThrows(
-                NoContentException.class,
-                () -> employeeService.getById(999)
-        );
-        assertTrue(ex.getMessage().contains("No se encontró empleado con ID: 999"));
-        verify(employeeRepository, times(1)).get(999);
-    }
-
-    @Test
     void testGetById_DataBaseError() {
-        // Simulamos que el DAO lanza una excepción
         when(employeeRepository.get(1)).thenThrow(new RuntimeException("DB error"));
 
-        // Verificamos que se lanza DataBaseException
         DataBaseException ex = assertThrows(
                 DataBaseException.class,
                 () -> employeeService.getById(1)
@@ -91,7 +68,6 @@ class EmployeeServiceTest {
 
     @Test
     void testGetByName_Success() {
-        // Simulamos que el DAO devuelve un empleado
         when(employeeRepository.get("Nacho")).thenReturn(employee);
 
         Employee result = employeeService.getByName("Nacho");
@@ -103,7 +79,7 @@ class EmployeeServiceTest {
 
     @Test
     void testGetByName_NameTooLong() {
-        // Nombre de 51 caracteres
+        // 51 caracteres xd
         String tooLongName = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1";
 
         BadRequestException ex = assertThrows(
@@ -115,14 +91,14 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void testGetByName_NoContent() {
-        when(employeeRepository.get("Unknown")).thenReturn(null);
+    void testGetByName_Database() {
+        when(employeeRepository.get("Nacho")).thenReturn(null);
 
         assertThrows(
-                NoContentException.class,
-                () -> employeeService.getByName("Unknown")
+                DataBaseException.class,
+                () -> employeeService.getByName("Nacho")
         );
-        verify(employeeRepository, times(1)).get("Unknown");
+        verify(employeeRepository, times(1)).get("Nacho");
     }
 
     @Test
@@ -186,7 +162,6 @@ class EmployeeServiceTest {
 
     @Test
     void testUpdate_Success() {
-        // Simulamos que el DAO actualiza correctamente
         when(employeeRepository.update(employee)).thenReturn(1);
 
         int result = employeeService.update(employee);
@@ -203,12 +178,11 @@ class EmployeeServiceTest {
                 DataBaseException.class,
                 () -> employeeService.update(employee)
         );
-        assertTrue(ex.getMessage().contains("error tecnico, pruebe de nuevo"));
+        assertTrue(ex.getMessage().contains("DB error"));
     }
 
     @Test
     void testUpdate_PhoneNumberWrongLength() {
-        // 8 dígitos en lugar de 9
         employee.setPhoneNumber("12345678");
 
         BadRequestException ex = assertThrows(

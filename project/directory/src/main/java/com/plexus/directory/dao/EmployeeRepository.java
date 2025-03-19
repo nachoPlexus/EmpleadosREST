@@ -7,7 +7,7 @@ import java.util.List;
 public interface EmployeeRepository {
     List<Employee> getAll();
     Employee get(int employeeId);
-    Employee get(String employeeName);
+    List<Employee> get(String employeeName);
 
     int save(Employee employee);
     int update(Employee employee);
