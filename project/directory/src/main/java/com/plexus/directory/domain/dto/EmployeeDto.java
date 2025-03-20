@@ -4,12 +4,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-public class EmployeeDTO {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class EmployeeDto {
     private Integer id; // Puede ser nulo al crear
 
     @NotBlank(message = "El nombre es obligatorio")

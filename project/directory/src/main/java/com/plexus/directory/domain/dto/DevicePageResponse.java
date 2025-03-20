@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EmployeePageResponse {
-    private List<EmployeeDto> employees;
-    private int totalEntities;
+public class DevicePageResponse {
+    private List<DeviceDto> devices;
+    private int totalDevices;
     private int pageNumber;
 }

@@ -5,6 +5,7 @@ import com.plexus.directory.common.SqlConstants;
 import com.plexus.directory.domain.error.BadRequestException;
 import com.plexus.directory.domain.error.DataBaseException;
 import com.plexus.directory.domain.Employee;
+import com.plexus.directory.domain.mapper.EmployeeRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,12 @@ import static com.plexus.directory.common.SqlConstants.DELETE_EMPLOYEE;
 @Profile("versionBase")
 public class EmployeeRepositoryImpl implements com.plexus.directory.dao.EmployeeRepository {
 
+    private final EmployeeRowMapper rowMapper;
+
+    public EmployeeRepositoryImpl(EmployeeRowMapper rowMapper) {
+        this.rowMapper = rowMapper;
+    }
+
 
     @Override
     public List<Employee> getAll() {
@@ -29,10 +36,9 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
         try (Connection conn = DriverManager.getConnection(Constants.DBURL)){
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(SqlConstants.SELECT_FORM_EMLOYEES);
-
-
+            
             while (rs.next()){
-                employees.add(new Employee(rs));
+                employees.add(rowMapper.mapRow(rs, rs.getRow()));
             }
 
         }catch (SQLException e){
@@ -45,7 +51,6 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
 
     @Override
     public Employee get(int employeeId) {
-
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
             PreparedStatement stmt =conn.prepareStatement(GET_EMPLOYEE_BY_ID)){
 
@@ -53,14 +58,14 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next())
-                return new Employee(rs);
+                return rowMapper.mapRow(rs, rs.getRow());
 
         }catch (SQLException e){
             throw new DataBaseException(e.getMessage());
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
-        return null;
+        return new Employee();
     }
 
     @Override
@@ -72,7 +77,7 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             ResultSet rs = stmt.executeQuery();
             List<Employee> employees = new ArrayList<>();
             while (rs.next())
-                employees.add(new Employee(rs));
+                employees.add(rowMapper.mapRow(rs, rs.getRow()));
             return employees;
         }catch (SQLException e){
             throw new DataBaseException(e.getMessage());

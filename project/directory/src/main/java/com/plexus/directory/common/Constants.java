@@ -5,4 +5,5 @@ public class Constants {
     public static final String DBURL = "jdbc:sqlite:fpdb.db";
 
     public static final String DB_COMMUNICATION_ERROR = "There was an error during database commmunication: ";
+    private Constants(){}
 }

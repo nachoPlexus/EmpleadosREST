@@ -3,18 +3,17 @@ package com.plexus.directory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-@Data
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "employees")
 public class Employee {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // SQLite usa AUTOINCREMENT
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NonNull
@@ -40,15 +39,4 @@ public class Employee {
 
     @Column(name = "phone_serial_number")
     private String phoneSerialNumber;
-
-
-    public Employee(ResultSet rs) throws SQLException {
-        this.id= rs.getInt("id");
-        this.name= rs.getString("name");
-        this.surname= rs.getString("surname");
-        this.mailPlexus=rs.getString("mail_plexus");
-        this.mailClient=rs.getString("mail_client");
-        this.clientId=rs.getString("client_id");
-        this.phoneNumber=rs.getString("phone_number");
-    }
 }

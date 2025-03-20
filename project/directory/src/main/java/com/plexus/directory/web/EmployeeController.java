@@ -1,8 +1,8 @@
 package com.plexus.directory.web;
 
-import com.plexus.directory.domain.dto.EmployeeDTO;
+import com.plexus.directory.domain.dto.EmployeeDto;
 import com.plexus.directory.domain.dto.EmployeePageResponse;
-import com.plexus.directory.facade.EmployeeFacade;
+import com.plexus.directory.facade.impl.EmployeeFacadeImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://127.0.0.1:8080")
 @RequestMapping("/employees")
 public class EmployeeController {
-    private final EmployeeFacade facade;
+    private final EmployeeFacadeImpl facade;
 
-    public EmployeeController(EmployeeFacade facade) {
+    public EmployeeController(EmployeeFacadeImpl facade) {
         this.facade = facade;
     }
 
@@ -25,7 +25,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/id/{employeeId}")
-    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable int employeeId) {
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable int employeeId) {
         return facade.getEmployeeById(employeeId);
     }
 
@@ -35,12 +35,12 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeDTO employee) {
+    public ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeDto employee) {
         return facade.createEmployee(employee);
     }
 
     @PutMapping
-    public ResponseEntity<String> updateEmployee(@Valid @RequestBody EmployeeDTO employee) {
+    public ResponseEntity<String> updateEmployee(@Valid @RequestBody EmployeeDto employee) {
         return facade.updateEmployee(employee);
     }
 
