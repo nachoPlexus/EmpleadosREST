@@ -2,6 +2,7 @@ package com.plexus.directory.facade;
 
 import com.plexus.directory.domain.dto.DeviceDto;
 import com.plexus.directory.domain.dto.DevicePageResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
 public interface DeviceFacade {
@@ -13,7 +14,7 @@ public interface DeviceFacade {
     ResponseEntity<DevicePageResponse> getDevicesByBrand(String brand);
 
     ResponseEntity<String> createDevice(DeviceDto deviceDTO);
-    ResponseEntity<String> updateDevice(DeviceDto deviceDTO) ;
+    ResponseEntity<String> updateDevice(@Valid DeviceDto deviceDTO) ;
 
     ResponseEntity<String> deleteDevice(int deviceId);
 }

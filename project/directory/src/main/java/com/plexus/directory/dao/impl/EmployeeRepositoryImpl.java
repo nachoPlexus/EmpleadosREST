@@ -2,9 +2,9 @@ package com.plexus.directory.dao.impl;
 
 import com.plexus.directory.common.Constants;
 import com.plexus.directory.common.SqlConstants;
+import com.plexus.directory.domain.Employee;
 import com.plexus.directory.domain.error.BadRequestException;
 import com.plexus.directory.domain.error.DataBaseException;
-import com.plexus.directory.domain.Employee;
 import com.plexus.directory.domain.mapper.EmployeeRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
@@ -13,11 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.plexus.directory.common.SqlConstants.GET_EMPLOYEE_BY_ID;
-import static com.plexus.directory.common.SqlConstants.GET_EMPLOYEE_BY_NAME;
-import static com.plexus.directory.common.SqlConstants.INSERT_EMPLOYEE;
-import static com.plexus.directory.common.SqlConstants.UPDATE_EMPLOYEE;
-import static com.plexus.directory.common.SqlConstants.DELETE_EMPLOYEE;
+import static com.plexus.directory.common.SqlConstants.*;
 
 @Repository
 @Profile("versionBase")
@@ -94,6 +90,11 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             stmt.setString(1, employee.getName());
             stmt.setString(2, employee.getSurname());
             stmt.setString(3, employee.getMailPlexus());
+            stmt.setString(4, employee.getMailClient() );
+            stmt.setString(5, employee.getClientId() );
+            stmt.setString(6, employee.getPhoneNumber() );
+            stmt.setString(7, employee.getPhoneSerialNumber() );
+            
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {

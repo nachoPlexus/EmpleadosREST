@@ -6,11 +6,13 @@ import com.plexus.directory.domain.dto.DevicePageResponse;
 import com.plexus.directory.domain.mapper.DeviceMapper;
 import com.plexus.directory.facade.DeviceFacade;
 import com.plexus.directory.service.impl.DeviceServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -26,11 +28,20 @@ public class DeviceFacadeImpl implements DeviceFacade {
 
     @Override
     public ResponseEntity<DevicePageResponse> getDevicesPaged(int page, int size) {
-        List<Device> devices = service.getAll(); // Aquí en realidad llamarías a una versión paginada en el Service
-        List<DeviceDto> deviceDtos = devices.stream().map(mapper::toDto).toList();
-        int totalEntities = devices.size(); // Esto debería venir del Service en una implementación paginada
+        List<Device> devices = service.getAll();
 
-        DevicePageResponse response = new DevicePageResponse(deviceDtos, totalEntities, page);
+        int totalEntities = devices.size();
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, totalEntities);
+
+        // Si la página solicitada está fuera del rango, devolver una lista vacía
+        List<Device> pagedDevices = (fromIndex >= totalEntities)
+                ? List.of()
+                : devices.subList(fromIndex, toIndex);
+
+        List<DeviceDto> deviceDtos = pagedDevices.stream().map(mapper::toDto).toList();
+
+        DevicePageResponse response = new DevicePageResponse(deviceDtos, pagedDevices.size(), page+1);
         return ResponseEntity.ok(response);
     }
 
@@ -58,7 +69,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
     }
 
     @Override
-    public ResponseEntity<String> updateDevice(DeviceDto deviceDTO) {
+    public ResponseEntity<String> updateDevice(@Valid DeviceDto deviceDTO) {
         int updated = service.update(mapper.toEntity(deviceDTO));
         return updated > 0 ? ResponseEntity.ok("Device actualizado bien")
                 : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No se va a ver esto nunca, antes salta exception");

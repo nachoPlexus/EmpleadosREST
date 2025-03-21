@@ -21,7 +21,7 @@ public class DeviceController {
     public ResponseEntity<DevicePageResponse> getDevices(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return facade.getDevicesPaged(page, size);
+        return facade.getDevicesPaged(page-1, size);
     }
 
     @GetMapping("/id/{deviceId}")
@@ -41,7 +41,7 @@ public class DeviceController {
 
     @PutMapping
     public ResponseEntity<String> updateDevice(@Valid @RequestBody DeviceDto device) {
-        return facade.updateDevice(device);
+        return facade.updateDevice( device);
     }
 
     @DeleteMapping("/{deviceId}")

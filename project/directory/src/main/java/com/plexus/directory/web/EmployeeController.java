@@ -21,7 +21,7 @@ public class EmployeeController {
     public ResponseEntity<EmployeePageResponse> getEmployees(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return facade.getEmployeesPaged(page, size);
+        return facade.getEmployeesPaged(page-1, size);
     }
 
     @GetMapping("/id/{employeeId}")
@@ -49,4 +49,3 @@ public class EmployeeController {
         return facade.deleteEmployee(employeeId);
     }
 }
-

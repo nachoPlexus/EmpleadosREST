@@ -1,7 +1,6 @@
 package com.plexus.directory.domain.mapper;
 
 import com.plexus.directory.domain.Device;
-import com.plexus.directory.domain.Employee;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

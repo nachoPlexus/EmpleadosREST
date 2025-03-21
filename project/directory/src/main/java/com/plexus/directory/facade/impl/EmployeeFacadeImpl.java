@@ -2,15 +2,16 @@ package com.plexus.directory.facade.impl;
 
 import com.plexus.directory.domain.Employee;
 import com.plexus.directory.domain.dto.EmployeeDto;
+import com.plexus.directory.domain.dto.EmployeePageResponse;
 import com.plexus.directory.domain.mapper.EmployeeMapper;
 import com.plexus.directory.facade.EmployeeFacade;
 import com.plexus.directory.service.impl.EmployeeServiceImpl;
-import com.plexus.directory.domain.dto.EmployeePageResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -28,11 +29,20 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
 
     @Override
     public ResponseEntity<EmployeePageResponse> getEmployeesPaged(int page, int size) {
-        List<Employee> employees = service.getAll(); // Aquí en realidad llamarías a una versión paginada en el Service
-        List<EmployeeDto> employeeDtos = employees.stream().map(mapper::toDto).toList();
-        int totalEntities = employees.size(); // Esto debería venir del Service en una implementación paginada
+        List<Employee> employees = service.getAll();
 
-        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, totalEntities, page);
+        int totalEntities = employees.size();
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, totalEntities);
+
+        // fuera de rango? vacio
+        List<Employee> pagedEmployees = (fromIndex >= totalEntities)
+                ? List.of()
+                : employees.subList(fromIndex, toIndex);
+
+        List<EmployeeDto> employeeDtos = pagedEmployees.stream().map(mapper::toDto).toList();
+
+        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, employees.size(), page+1);
         return ResponseEntity.ok(response);
     }
 

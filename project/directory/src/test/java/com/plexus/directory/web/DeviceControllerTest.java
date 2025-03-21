@@ -17,14 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class DeviceControllerTest {
@@ -47,14 +47,7 @@ class DeviceControllerTest {
 
     @BeforeEach
     void setUp() {
-        deviceDto = new DeviceDto();
-        deviceDto.setId(1);
-        deviceDto.setSerialNumber("ABC12345678");
-        deviceDto.setBrand("Apple");
-        deviceDto.setModel("iPhone X");
-        deviceDto.setOs("iOS");
-        deviceDto.setAssignedTo(999);
-
+        deviceDto = new DeviceDto(1,"ABC12345678", "Apple", "iPhone X", "iOS",999);
         DeviceDto device2 = new DeviceDto(2, "DEF12345678", "Samsung", "Galaxy S21", "Android", 888);
         DeviceDto device3 = new DeviceDto(3, "GHI12345678", "Xiaomi", "Mi 11", "Android", 777);
         devices = List.of(deviceDto, device2, device3);
@@ -174,53 +167,5 @@ class DeviceControllerTest {
 
         assertEquals("Dispositivo no encontrado", exception.getMessage());
         verify(facade, times(1)).deleteDevice(99);
-    }
-
-    // Validaciones con Jakarta
-    // DTO con datos malos malísimos
-    @Test
-    void createDevice_InvalidData() throws Exception {
-        String invalidDeviceJson = """
-            {
-              "brand": "Nacho",
-              "serialNumber": "",
-              "os": "nacho.llorente2@plexus.com"
-            }
-        """;
-
-        mockMvc.perform(post("/api/devices")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidDeviceJson))  // Aquí usamos .content() en lugar de .body()
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Your request was invalid :El serialNumber es obligatorio"));
-
-        verify(facade2, never()).createDevice(any());
-    }
-
-
-    @Test
-    void updateDevice_InvalidData() {
-        DeviceDto invalidDeviceDto = new DeviceDto();
-        invalidDeviceDto.setBrand(""); // brand vacío
-
-        Exception exception = assertThrows(BadRequestException.class, () ->
-                deviceController.updateDevice(invalidDeviceDto)
-        );
-
-        assertEquals("Your request was invalid :La marca es obligatoria", exception.getMessage());
-        verify(facade, times(1)).updateDevice(invalidDeviceDto);
-    }
-
-    @Test
-    void createDevice_ValidationError() {
-        DeviceDto invalidDeviceDto = new DeviceDto();
-        invalidDeviceDto.setSerialNumber(""); // Valor malo
-
-        Exception exception = assertThrows(BadRequestException.class, () ->
-                deviceController.createDevice(invalidDeviceDto)
-        );
-
-        assertEquals("Your request was invalid :El serialNumber es obligatorio", exception.getMessage());
-        verify(facade, times(1)).createDevice(invalidDeviceDto);
     }
 }

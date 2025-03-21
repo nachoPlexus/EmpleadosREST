@@ -7,10 +7,10 @@ import com.plexus.directory.domain.error.NoContentException;
 import com.plexus.directory.facade.impl.EmployeeFacadeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -42,7 +42,7 @@ class EmployeeControllerTest {
 
         employees = List.of(
                 employeeDto,
-                new EmployeeDto(2, "Ana", "García", "ana.garcia@plexus.es", "777777777", null, null, null),
+                new EmployeeDto(2, "Ana", "García", "ana.ana@plexus.es", "777777777", null, null, null),
                 new EmployeeDto(3, "Luis", "Martínez", "luis.martinez@plexus.es", "688888888", null, null, null)
         );
 

@@ -3,7 +3,6 @@ package com.plexus.directory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Getter
 @Setter
 @Builder

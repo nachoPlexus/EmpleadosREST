@@ -14,7 +14,7 @@ public class EmployeeMapperUnused {
         }
 
         Employee employee = new Employee();
-        employee.setId(dto.getId() != null ? dto.getId() : -1);
+        employee.setId(dto.getId());
         employee.setName(dto.getName());
         employee.setSurname(dto.getSurname());
         employee.setMailPlexus(dto.getMailPlexus());

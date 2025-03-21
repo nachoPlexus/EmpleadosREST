@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmployeeDto {
-    private Integer id; // Puede ser nulo al crear
+    private int id; // Puede ser nulo al crear
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 50, message = "El nombre debe tener máximo 50 caracteres")
@@ -27,7 +27,7 @@ public class EmployeeDto {
     @Size(max = 200, message = "El mailPlexus debe tener máximo 200 caracteres")
     private String mailPlexus;
 
-    @Email(message = "El correo debe ser válido")
+    @Email(message = "El correo de cliente debe ser válido")
     @Size(max = 200, message = "El mailClient debe tener máximo 200 caracteres")
     private String mailClient;
 

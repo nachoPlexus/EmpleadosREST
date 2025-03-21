@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class EmployeePageResponse {
     private List<EmployeeDto> employees;
-    private int totalEntities;
+    private int totalEmployees;
     private int pageNumber;
 }
