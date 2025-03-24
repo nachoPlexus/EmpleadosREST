@@ -143,4 +143,19 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             throw new BadRequestException(e.getMessage());
         }
     }
+
+    @Override
+    public int countAll() {
+        try (Connection conn = DriverManager.getConnection(Constants.DBURL);
+             Statement stmt = conn.createStatement()) {
+
+            ResultSet rs = stmt.executeQuery(COUNTALL_EMPLOYEES);
+            return rs.next() ? rs.getInt(1) : -1;
+
+        } catch (SQLException e) {
+            throw new DataBaseException("error contando employees: "+e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("error inesperado: "+ e.getMessage());
+        }
+    }
 }

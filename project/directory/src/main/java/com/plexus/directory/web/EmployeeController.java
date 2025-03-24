@@ -2,7 +2,7 @@ package com.plexus.directory.web;
 
 import com.plexus.directory.domain.dto.EmployeeDto;
 import com.plexus.directory.domain.dto.EmployeePageResponse;
-import com.plexus.directory.facade.impl.EmployeeFacadeImpl;
+import com.plexus.directory.facade.EmployeeFacade;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://127.0.0.1:8080")
 @RequestMapping("/employees")
 public class EmployeeController {
-    private final EmployeeFacadeImpl facade;
+    private final EmployeeFacade facade;
 
-    public EmployeeController(EmployeeFacadeImpl facade) {
+    public EmployeeController(EmployeeFacade facade) {
         this.facade = facade;
     }
 

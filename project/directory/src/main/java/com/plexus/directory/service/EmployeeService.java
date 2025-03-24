@@ -8,6 +8,8 @@ public interface EmployeeService {
 
     List<Employee> getAll(int page, int size);
 
+    int getTotalEmployees();
+
     Employee getById(int employeeId);
 
     List<Employee> getByName(String employeeName);

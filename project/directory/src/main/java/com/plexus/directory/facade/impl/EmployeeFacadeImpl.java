@@ -6,16 +6,22 @@ import com.plexus.directory.domain.dto.EmployeePageResponse;
 import com.plexus.directory.domain.mapper.EmployeeMapper;
 import com.plexus.directory.facade.EmployeeFacade;
 import com.plexus.directory.service.impl.EmployeeServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+@Slf4j
 @Component
 @Profile("versionBase")
+@EnableAsync
 public class EmployeeFacadeImpl implements EmployeeFacade {
 
     private final EmployeeServiceImpl service;
@@ -29,12 +35,25 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
 
     @Override
     public ResponseEntity<EmployeePageResponse> getEmployeesPaged(int page, int size) {
-        List<Employee> employees = service.getAll(page, size);
+        CompletableFuture<Integer> totalSizeFuture = getEmployeeCountAsync();
 
+        List<Employee> employees = service.getAll(page,size);
         List<EmployeeDto> employeeDtos = employees.stream().map(mapper::toDto).toList();
 
-        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, employeeDtos.size(), page+1);
+        int totalEntities;
+        try {
+            totalEntities = totalSizeFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error al contar los employees totales: \n"+e.getMessage());
+            totalEntities = employees.size();
+        }
+
+        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, totalEntities, page);
         return ResponseEntity.ok(response);
+    }
+    @Async
+    public CompletableFuture<Integer> getEmployeeCountAsync() {
+        return CompletableFuture.supplyAsync(service::getTotalEmployees);//LO HAGO CON ESTO PORQUE EL AsyncResult ESTA DEPRECADO
     }
 
     @Override

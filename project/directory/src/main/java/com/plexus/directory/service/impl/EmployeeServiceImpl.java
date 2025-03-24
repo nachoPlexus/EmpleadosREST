@@ -22,6 +22,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         return dao.getAll(page, size);
     }
 
+    public int getTotalEmployees() {
+        return dao.countAll();
+    }
+
+
     public Employee getById(int employeeId) {
         return dao.get(employeeId);
     }
