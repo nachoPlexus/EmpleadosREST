@@ -17,11 +17,15 @@ public class EmployeeController {
         this.facade = facade;
     }
 
-    @GetMapping
+    @GetMapping({"/{page}/{size}", "/"})
     public ResponseEntity<EmployeePageResponse> getEmployees(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return facade.getEmployeesPaged(page-1, size);
+            @PathVariable(required = false) Integer page,
+            @PathVariable(required = false) Integer size) {
+        //los page y size por defecto
+        int resolvedPage = (page != null) ? page - 1 : 0;
+        int resolvedSize = (size != null) ? size : 10;
+
+        return facade.getEmployeesPaged(resolvedPage, resolvedSize);
     }
 
     @GetMapping("/id/{employeeId}")

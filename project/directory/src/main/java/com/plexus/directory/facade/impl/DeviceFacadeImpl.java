@@ -28,20 +28,9 @@ public class DeviceFacadeImpl implements DeviceFacade {
 
     @Override
     public ResponseEntity<DevicePageResponse> getDevicesPaged(int page, int size) {
-        List<Device> devices = service.getAll();
+        List<DeviceDto> deviceDtos = service.getAll().stream().map(mapper::toDto).toList();
 
-        int totalEntities = devices.size();
-        int fromIndex = page * size;
-        int toIndex = Math.min(fromIndex + size, totalEntities);
-
-        // Si la página solicitada está fuera del rango, devolver una lista vacía
-        List<Device> pagedDevices = (fromIndex >= totalEntities)
-                ? List.of()
-                : devices.subList(fromIndex, toIndex);
-
-        List<DeviceDto> deviceDtos = pagedDevices.stream().map(mapper::toDto).toList();
-
-        DevicePageResponse response = new DevicePageResponse(deviceDtos, pagedDevices.size(), page+1);
+        DevicePageResponse response = new DevicePageResponse(deviceDtos, deviceDtos.size(), page+1);
         return ResponseEntity.ok(response);
     }
 

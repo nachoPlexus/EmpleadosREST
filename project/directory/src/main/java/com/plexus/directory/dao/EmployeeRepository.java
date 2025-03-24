@@ -5,7 +5,7 @@ import com.plexus.directory.domain.Employee;
 import java.util.List;
 
 public interface EmployeeRepository {
-    List<Employee> getAll();
+    List<Employee> getAll(int page, int size);
     Employee get(int employeeId);
     List<Employee> get(String employeeName);
 

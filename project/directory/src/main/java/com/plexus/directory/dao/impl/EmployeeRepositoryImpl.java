@@ -27,17 +27,20 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
 
 
     @Override
-    public List<Employee> getAll() {
-        List<Employee> employees=new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(Constants.DBURL)){
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(SqlConstants.SELECT_FORM_EMLOYEES);
-            
-            while (rs.next()){
+    public List<Employee> getAll(int page, int size) {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(Constants.DBURL)) {
+            PreparedStatement stmt = conn.prepareStatement(SqlConstants.SELECT_FORM_EMLOYEES);
+
+            stmt.setInt(1, size);
+            stmt.setInt(2, page * size);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
                 employees.add(rowMapper.mapRow(rs, rs.getRow()));
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataBaseException(e.getMessage());
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
@@ -48,15 +51,15 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
     @Override
     public Employee get(int employeeId) {
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
-            PreparedStatement stmt =conn.prepareStatement(GET_EMPLOYEE_BY_ID)){
+             PreparedStatement stmt = conn.prepareStatement(GET_EMPLOYEE_BY_ID)) {
 
-            stmt.setInt(1,employeeId);
+            stmt.setInt(1, employeeId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next())
                 return rowMapper.mapRow(rs, rs.getRow());
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataBaseException(e.getMessage());
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
@@ -69,13 +72,13 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
              PreparedStatement stmt = conn.prepareStatement(GET_EMPLOYEE_BY_NAME)) {
 
-            stmt.setString(1,employeeName);
+            stmt.setString(1, employeeName);
             ResultSet rs = stmt.executeQuery();
             List<Employee> employees = new ArrayList<>();
             while (rs.next())
                 employees.add(rowMapper.mapRow(rs, rs.getRow()));
             return employees;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataBaseException(e.getMessage());
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
@@ -90,11 +93,11 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             stmt.setString(1, employee.getName());
             stmt.setString(2, employee.getSurname());
             stmt.setString(3, employee.getMailPlexus());
-            stmt.setString(4, employee.getMailClient() );
-            stmt.setString(5, employee.getClientId() );
-            stmt.setString(6, employee.getPhoneNumber() );
-            stmt.setString(7, employee.getPhoneSerialNumber() );
-            
+            stmt.setString(4, employee.getMailClient());
+            stmt.setString(5, employee.getClientId());
+            stmt.setString(6, employee.getPhoneNumber());
+            stmt.setString(7, employee.getPhoneSerialNumber());
+
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -128,13 +131,13 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
     @Override
     public boolean delete(Employee employee) {
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
-            PreparedStatement stmt = conn.prepareStatement(DELETE_EMPLOYEE)
-        ){
+             PreparedStatement stmt = conn.prepareStatement(DELETE_EMPLOYEE)
+        ) {
 
-            stmt.setInt(1,employee.getId());
+            stmt.setInt(1, employee.getId());
             return stmt.executeUpdate() > 0;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new DataBaseException(e.getMessage());
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());

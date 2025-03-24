@@ -2,8 +2,8 @@ package com.plexus.directory.common;
 
 public class SqlConstants {
 
-    public static final String GETALL_FORM_DEVICES = "SELECT * FROM devices;";
-    public static final String SELECT_FORM_EMLOYEES = "Select * FROM employees;";
+    public static final String GETALL_FORM_DEVICES = "SELECT * FROM devices ;";
+    public static final String SELECT_FORM_EMLOYEES = "SELECT * FROM employees LIMIT ? OFFSET ?;";
     public static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employees WHERE id = ?";
     public static final String GET_DEVICE_BY_ID = "SELECT * FROM devices WHERE id = ?";
     public static final String GET_DEVICE_BY_BRAND = "SELECT * FROM devices WHERE brand = ?";

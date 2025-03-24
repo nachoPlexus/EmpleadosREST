@@ -18,8 +18,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.dao = dao;
     }
 
-    public List<Employee> getAll() {
-        return dao.getAll();
+    public List<Employee> getAll(int page, int size) {
+        return dao.getAll(page, size);
     }
 
     public Employee getById(int employeeId) {

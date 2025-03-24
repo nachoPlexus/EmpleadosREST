@@ -29,20 +29,11 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
 
     @Override
     public ResponseEntity<EmployeePageResponse> getEmployeesPaged(int page, int size) {
-        List<Employee> employees = service.getAll();
+        List<Employee> employees = service.getAll(page, size);
 
-        int totalEntities = employees.size();
-        int fromIndex = page * size;
-        int toIndex = Math.min(fromIndex + size, totalEntities);
+        List<EmployeeDto> employeeDtos = employees.stream().map(mapper::toDto).toList();
 
-        // fuera de rango? vacio
-        List<Employee> pagedEmployees = (fromIndex >= totalEntities)
-                ? List.of()
-                : employees.subList(fromIndex, toIndex);
-
-        List<EmployeeDto> employeeDtos = pagedEmployees.stream().map(mapper::toDto).toList();
-
-        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, employees.size(), page+1);
+        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, employeeDtos.size(), page+1);
         return ResponseEntity.ok(response);
     }
 
