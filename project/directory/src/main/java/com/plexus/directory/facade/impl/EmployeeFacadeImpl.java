@@ -63,9 +63,9 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
     }
 
     @Override
-    public ResponseEntity<EmployeePageResponse> getEmployeesByName(String employeeName) {
+    public ResponseEntity<EmployeePageResponse> getEmployeesByName(String employeeName,int page, int size) {
 
-        List<EmployeeDto> employees = service.getByName(employeeName)
+        List<EmployeeDto> employees = service.getByName(employeeName,page,size)
                 .stream().map(mapper::toDto).toList();
 
         return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), 1));

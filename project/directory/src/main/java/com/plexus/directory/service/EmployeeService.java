@@ -12,7 +12,7 @@ public interface EmployeeService {
 
     Employee getById(int employeeId);
 
-    List<Employee> getByName(String employeeName);
+    List<Employee> getByName(String employeeName,int page, int size);
 
     int save(Employee employee);
 

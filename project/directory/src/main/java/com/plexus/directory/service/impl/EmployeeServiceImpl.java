@@ -31,8 +31,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         return dao.get(employeeId);
     }
 
-    public List<Employee> getByName(String employeeName) {
-        return dao.get(employeeName);
+    @Override
+    public List<Employee> getByName(String employeeName,int resolvedPage, int resolvedSize) {
+        return dao.get(employeeName, resolvedPage,resolvedSize);
     }
 
     @Transactional

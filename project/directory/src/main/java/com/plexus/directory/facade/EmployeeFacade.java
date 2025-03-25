@@ -10,7 +10,7 @@ public interface EmployeeFacade {
 
       ResponseEntity<EmployeeDto> getEmployeeById(int employeeId) ;
 
-      ResponseEntity<EmployeePageResponse> getEmployeesByName(String employeeName);
+      ResponseEntity<EmployeePageResponse> getEmployeesByName(String employeeName, int resolvedPage, int resolvedSize);
 
       ResponseEntity<String> createEmployee(EmployeeDto employeeDTO);
       ResponseEntity<String> updateEmployee(EmployeeDto employeeDTO) ;

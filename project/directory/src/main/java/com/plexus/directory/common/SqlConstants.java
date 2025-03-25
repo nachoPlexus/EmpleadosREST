@@ -8,7 +8,7 @@ public class SqlConstants {
     public static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employees WHERE id = ?";
     public static final String GET_DEVICE_BY_ID = "SELECT * FROM devices WHERE id = ?";
     public static final String GET_DEVICE_BY_BRAND = "SELECT * FROM devices WHERE brand = ?";
-    public static final String GET_EMPLOYEE_BY_NAME = "SELECT * FROM employees WHERE name LIKE ?%";
+    public static final String GET_EMPLOYEE_BY_NAME = "SELECT * FROM employees WHERE name LIKE ? LIMIT ? OFFSET ?";
     public static final String INSERT_EMPLOYEE = "INSERT INTO employees (name, surname, mail_plexus, mail_client, client_id, phone_number, phone_serial_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String INSERT_DEVICE = "INSERT INTO devices (serial_number, brand, os) VALUES (?, ?, ?)";
     public static final String UPDATE_EMPLOYEE = "UPDATE employees SET name = ?, surname = ?, mail_plexus = ? WHERE id = ?";

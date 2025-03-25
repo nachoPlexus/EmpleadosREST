@@ -68,11 +68,14 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
     }
 
     @Override
-    public List<Employee> get(String employeeName) {
+    public List<Employee> get(String employeeName, int page, int size) {
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
              PreparedStatement stmt = conn.prepareStatement(GET_EMPLOYEE_BY_NAME)) {
 
-            stmt.setString(1, employeeName);
+            stmt.setString(1, "%"+employeeName+"%");
+            stmt.setInt(2, size);
+            stmt.setInt(3, page * size);
+
             ResultSet rs = stmt.executeQuery();
             List<Employee> employees = new ArrayList<>();
             while (rs.next())
