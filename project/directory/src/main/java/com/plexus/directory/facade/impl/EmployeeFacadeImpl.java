@@ -68,7 +68,7 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
         List<EmployeeDto> employees = service.getByName(employeeName,page,size)
                 .stream().map(mapper::toDto).toList();
 
-        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), 1));
+        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page));
     }
 
     @Override

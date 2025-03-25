@@ -50,13 +50,13 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployees() {
-        when(facade.getEmployeesPaged(1, 10)).thenReturn(ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), 1)));
+        when(facade.getEmployeesPaged(0, 10)).thenReturn(ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), 1)));
 
         ResponseEntity<EmployeePageResponse> response = employeeController.getEmployees(1, 10);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(facade, times(1)).getEmployeesPaged(1, 10);
+        verify(facade, times(1)).getEmployeesPaged(0, 10);
     }
 
     @Test
@@ -73,14 +73,14 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployeesByName() {
-        when(facade.getEmployeesByName("Nacho")).thenReturn(ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), 1)));
+        when(facade.getEmployeesByName("Nacho",0,200)).thenReturn(ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), 1)));
 
-        ResponseEntity<EmployeePageResponse> response = employeeController.getEmployeesByName("Nacho");
+        ResponseEntity<EmployeePageResponse> response = employeeController.getEmployeesByName("Nacho",1,200);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        verify(facade, times(1)).getEmployeesByName("Nacho");
+        verify(facade, times(1)).getEmployeesByName("Nacho",0,200);
     }
 
     @Test
@@ -97,14 +97,14 @@ class EmployeeControllerTest {
 
     @Test
     void getEmployeesByName_EmptyResponse() {
-        when(facade.getEmployeesByName("Unknown")).thenReturn(ResponseEntity.noContent().build());
+        when(facade.getEmployeesByName("Unknown",0,200)).thenReturn(ResponseEntity.noContent().build());
 
-        ResponseEntity<EmployeePageResponse> response = employeeController.getEmployeesByName("Unknown");
+        ResponseEntity<EmployeePageResponse> response = employeeController.getEmployeesByName("Unknown",1,200);
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertNull(response.getBody());
-        verify(facade, times(1)).getEmployeesByName("Unknown");
+        verify(facade, times(1)).getEmployeesByName("Unknown",0,200);
     }
 
     @Test

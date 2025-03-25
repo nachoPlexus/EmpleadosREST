@@ -45,22 +45,22 @@ class EmployeeServiceImplTest {
 
     @Test
     void testGetAll_Success() {
-        when(employeeRepository.getAll()).thenReturn(employees);
+        when(employeeRepository.getAll(1,200)).thenReturn(employees);
 
-        List<Employee> result = employeeServiceImpl.getAll();
+        List<Employee> result = employeeServiceImpl.getAll(1,200);
 
         assertNotNull(result);
         assertEquals(3, result.size());
-        verify(employeeRepository, times(1)).getAll();
+        verify(employeeRepository, times(1)).getAll(1,200);
     }
 
     @Test
     void testGetAll_DataBaseError() {
-        when(employeeRepository.getAll()).thenThrow(new RuntimeException("DB error"));
+        when(employeeRepository.getAll(1,200)).thenThrow(new RuntimeException("DB error"));
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> employeeServiceImpl.getAll());
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> employeeServiceImpl.getAll(1,200));
         assertTrue(ex.getMessage().contains("DB error"));
-        verify(employeeRepository, times(1)).getAll();
+        verify(employeeRepository, times(1)).getAll(1,200);
     }
 
     @Test
@@ -85,23 +85,23 @@ class EmployeeServiceImplTest {
 
     @Test
     void testGetByName_Success() {
-        when(employeeRepository.get("Nacho")).thenReturn(employees);
+        when(employeeRepository.get("Nacho",1,200)).thenReturn(employees);
 
-        List<Employee> result = employeeServiceImpl.getByName("Nacho");
+        List<Employee> result = employeeServiceImpl.getByName("Nacho",1,200);
         int randomIndex = new Random().nextInt(result.size());
 
         assertNotNull(result);
         assertEquals("Nacho", result.get(randomIndex).getName());
-        verify(employeeRepository, times(1)).get("Nacho");
+        verify(employeeRepository, times(1)).get("Nacho",1,200);
     }
 
     @Test
     void testGetByName_DataBaseError() {
-        when(employeeRepository.get("Nacho")).thenThrow(new RuntimeException("DB error"));
+        when(employeeRepository.get("Nacho",1,200)).thenThrow(new RuntimeException("DB error"));
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> employeeServiceImpl.getByName("Nacho"));
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> employeeServiceImpl.getByName("Nacho",1,200));
         assertTrue(ex.getMessage().contains("DB error"));
-        verify(employeeRepository, times(1)).get("Nacho");
+        verify(employeeRepository, times(1)).get("Nacho",1,200);
     }
 
     @Test

@@ -56,14 +56,14 @@ class EmployeeFacadeImplTest {
 
     @Test
     void testGetEmployeesPaged_Success() {
-        when(employeeService.getAll()).thenReturn(employeeList);
+        when(employeeService.getAll(1,10)).thenReturn(employeeList);
         when(employeeMapper.toDto(any())).thenReturn(employeeDto);
 
         ResponseEntity<EmployeePageResponse> response = employeeFacade.getEmployeesPaged(1, 10);
 
         assertNotNull(response);
         assertEquals(3, response.getBody().getEmployees().stream().count());
-        verify(employeeService, times(1)).getAll();
+        verify(employeeService, times(1)).getAll(1,10);
         verify(employeeMapper, times(3)).toDto(any());
     }
 
@@ -82,14 +82,14 @@ class EmployeeFacadeImplTest {
 
     @Test
     void testGetEmployeesByName_Success() {
-        when(employeeService.getByName("Nacho")).thenReturn(employeeList);
+        when(employeeService.getByName("Nacho",1,200)).thenReturn(employeeList);
         when(employeeMapper.toDto(any())).thenReturn(employeeDto);
 
-        ResponseEntity<EmployeePageResponse> response = employeeFacade.getEmployeesByName("Nacho");
+        ResponseEntity<EmployeePageResponse> response = employeeFacade.getEmployeesByName("Nacho",1,200);
 
         assertNotNull(response);
         assertEquals(3, response.getBody().getEmployees().stream().count());
-        verify(employeeService, times(1)).getByName("Nacho");
+        verify(employeeService, times(1)).getByName("Nacho",1,200);
         verify(employeeMapper, times(3)).toDto(any());
     }
 
@@ -101,7 +101,7 @@ class EmployeeFacadeImplTest {
         ResponseEntity<String> response = employeeFacade.createEmployee(employeeDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals("Employee created successfully", response.getBody());
+        assertEquals("Employee creado bien", response.getBody());
         verify(employeeService, times(1)).save(employee);
     }
 
@@ -147,7 +147,7 @@ class EmployeeFacadeImplTest {
         ResponseEntity<String> response = employeeFacade.deleteEmployee(1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Employee deleted successfully", response.getBody());
+        assertEquals("Employee borrado bien", response.getBody());
         verify(employeeService, times(1)).delete(employee);
     }
 
