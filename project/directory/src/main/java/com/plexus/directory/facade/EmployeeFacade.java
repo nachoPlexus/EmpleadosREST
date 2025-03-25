@@ -16,4 +16,6 @@ public interface EmployeeFacade {
       ResponseEntity<String> updateEmployee(EmployeeDto employeeDTO) ;
 
       ResponseEntity<String> deleteEmployee(int employeeId);
+
+      ResponseEntity<String> updateAllSurnamesToCamelCase();
 }

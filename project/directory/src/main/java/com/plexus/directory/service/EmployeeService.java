@@ -20,4 +20,5 @@ public interface EmployeeService {
 
     boolean delete(Employee employee);
 
+    int updateAllSurnamesToCamelCase();
 }

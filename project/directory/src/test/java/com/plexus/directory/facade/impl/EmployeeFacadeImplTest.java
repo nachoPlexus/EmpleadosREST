@@ -113,7 +113,7 @@ class EmployeeFacadeImplTest {
         ResponseEntity<String> response = employeeFacade.createEmployee(employeeDto);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Unexpected error", response.getBody());
+        assertEquals("error inesperado", response.getBody());
     }
 
     @Test
@@ -124,7 +124,7 @@ class EmployeeFacadeImplTest {
         ResponseEntity<String> response = employeeFacade.updateEmployee(employeeDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Employee updated successfully", response.getBody());
+        assertEquals("Employee actualizado bien", response.getBody());
         verify(employeeService, times(1)).update(employee);
     }
 
@@ -136,7 +136,7 @@ class EmployeeFacadeImplTest {
         ResponseEntity<String> response = employeeFacade.updateEmployee(employeeDto);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Unexpected error", response.getBody());
+        assertEquals("error inesperado", response.getBody());
     }
 
     @Test
@@ -159,6 +159,6 @@ class EmployeeFacadeImplTest {
         ResponseEntity<String> response = employeeFacade.deleteEmployee(1);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Unexpected error", response.getBody());
+        assertEquals("error inesperado", response.getBody());
     }
 }

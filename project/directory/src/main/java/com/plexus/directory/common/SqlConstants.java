@@ -15,6 +15,8 @@ public class SqlConstants {
     public static final String UPDATE_DEVICE = "UPDATE devices SET serial_number = ?, surname = ?, os = ? WHERE id = ?";
     public static final String DELETE_EMPLOYEE = "DELETE FROM employees where id=?";
     public static final String DELETE_DEVICE = "DELETE FROM devices where id=?";
+    public static final String GETALL_EMPLOYEES_ID_SURNAME = "SELECT id, surname FROM employees";
+    public static final String UPDATE_EMPLOYEE_SURNAME = "UPDATE employees SET surname = ? WHERE id = ?";
 
     private SqlConstants(){}
 }

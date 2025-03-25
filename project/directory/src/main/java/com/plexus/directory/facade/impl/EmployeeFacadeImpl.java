@@ -74,23 +74,30 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
     @Override
     public ResponseEntity<String> createEmployee(EmployeeDto employeeDTO) {
         int result = service.save(mapper.toEntity(employeeDTO));
-        return result > 0 ? ResponseEntity.status(HttpStatus.CREATED).body("Employee created successfully")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error");
+        return result > 0 ? ResponseEntity.status(HttpStatus.CREATED).body("Employee creado bien")
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
     }
 
     @Override
     public ResponseEntity<String> updateEmployee(EmployeeDto employeeDTO) {
         int updated = service.update(mapper.toEntity(employeeDTO));
-        return updated > 0 ? ResponseEntity.ok("Employee updated successfully")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error");
+        return updated > 0 ? ResponseEntity.ok("Employee actualizado bien")
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
     }
 
     @Override
     public ResponseEntity<String> deleteEmployee(int employeeId) {
         Employee employee = service.getById(employeeId);
         if (service.delete(employee)) {
-            return ResponseEntity.ok("Employee deleted successfully");
+            return ResponseEntity.ok("Employee borrado bien");
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
+    }
+
+    @Override
+    public ResponseEntity<String> updateAllSurnamesToCamelCase() {
+        int updated = service.updateAllSurnamesToCamelCase();
+        return updated > 0 ? ResponseEntity.ok("Employees actualizados bien")
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
     }
 }

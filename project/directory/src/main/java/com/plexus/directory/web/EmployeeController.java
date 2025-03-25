@@ -56,6 +56,12 @@ public class EmployeeController {
         return facade.updateEmployee(employee);
     }
 
+
+    @PutMapping("/surnames")
+    public ResponseEntity<String> updateAllSurnames() {
+        return facade.updateAllSurnamesToCamelCase();
+    }
+
     @DeleteMapping("/{employeeId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable int employeeId) {
         return facade.deleteEmployee(employeeId);

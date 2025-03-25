@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.plexus.directory.common.SqlConstants.*;
 
@@ -104,11 +106,11 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataBaseException("Failed to insert employee, no rows affected.");
+                throw new DataBaseException("errror al guardar employees, no rows afectadas.");
             }
             return 1;
         } catch (SQLException e) {
-            throw new DataBaseException("Database error: " + e.getMessage());
+            throw new DataBaseException("error de base de datos: \n" + e.getMessage());
         }
     }
 
@@ -161,4 +163,41 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             throw new BadRequestException("error inesperado: "+ e.getMessage());
         }
     }
+
+    public int updateAllSurnamesToCamelCase() {
+        try (Connection conn = DriverManager.getConnection(Constants.DBURL);
+             PreparedStatement stmtSelect = conn.prepareStatement(GETALL_EMPLOYEES_ID_SURNAME);
+             PreparedStatement stmtUpdate = conn.prepareStatement(UPDATE_EMPLOYEE_SURNAME)) {
+            conn.setAutoCommit(false);
+
+            ResultSet rs = stmtSelect.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String surname = rs.getString("surname");
+
+                if (surname != null && !surname.isEmpty()) {
+                    String camelCaseSurname = toCamelCase(surname);
+
+                    stmtUpdate.setString(1, camelCaseSurname);
+                    stmtUpdate.setInt(2, id);
+                    stmtUpdate.executeUpdate();
+                }
+            }
+
+            conn.commit();
+            return 1;
+        } catch (SQLException e) {
+            throw new RuntimeException("error actualizando employees: " + e.getMessage(), e);
+        }
+    }
+
+
+    public String toCamelCase(String text) {
+        return Arrays.stream(text.split(" "))
+                .map(word ->
+                        Character.toUpperCase(word.charAt(0))
+                        + word.substring(1).toLowerCase()
+                ).collect(Collectors.joining(" "));
+    }
+
 }

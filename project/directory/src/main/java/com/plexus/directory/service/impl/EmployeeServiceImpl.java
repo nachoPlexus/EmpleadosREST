@@ -49,4 +49,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public boolean delete(Employee employee) {
         return dao.delete(employee);
     }
+
+    @Override
+    public int updateAllSurnamesToCamelCase() {
+        return dao.updateAllSurnamesToCamelCase();
+    }
 }

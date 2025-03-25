@@ -11,6 +11,6 @@ public interface EmployeeRepository {
     int save(Employee employee);
     int update(Employee employee);
     boolean delete(Employee employee);
-
+    int updateAllSurnamesToCamelCase();
     int countAll();
 }
