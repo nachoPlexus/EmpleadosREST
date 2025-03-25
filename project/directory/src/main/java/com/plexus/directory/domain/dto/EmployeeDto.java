@@ -23,8 +23,8 @@ public class EmployeeDto {
     private String surname;
 
     @NotBlank(message = "El correo electrónico es obligatorio")
-    @Email(message = "El correo debe ser válido")
     @Size(max = 200, message = "El mailPlexus debe tener máximo 200 caracteres")
+    @Email(message = "El correo debe ser válido")
     private String mailPlexus;
 
     @Email(message = "El correo de cliente debe ser válido")

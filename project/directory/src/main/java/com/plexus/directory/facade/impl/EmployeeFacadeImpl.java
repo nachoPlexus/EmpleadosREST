@@ -48,7 +48,7 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
             totalEntities = employees.size();
         }
 
-        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, totalEntities, page);
+        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, totalEntities, page+1);
         return ResponseEntity.ok(response);
     }
     @Async
