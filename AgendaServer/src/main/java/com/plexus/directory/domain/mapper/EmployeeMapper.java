@@ -1,7 +1,6 @@
 package com.plexus.directory.domain.mapper;
 
 import com.plexus.directory.domain.model.EmployeeDto;
-import com.plexus.directory.domain.dto.EmployeeDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

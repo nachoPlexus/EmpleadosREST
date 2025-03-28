@@ -1,7 +1,9 @@
 package com.plexus.directory.domain.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
 
 @Builder
 @Data

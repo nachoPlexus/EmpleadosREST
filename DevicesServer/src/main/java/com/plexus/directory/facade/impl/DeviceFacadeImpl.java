@@ -105,13 +105,13 @@ public class DeviceFacadeImpl implements DeviceFacade {
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> updateDevice(List<DeviceDto> devicesDto) {
+    public ResponseEntity<String> updateDevice(List<DeviceDto> devicesDto) {
         Result validationResult = validateDevicesList(devicesDto);
         int result = service.update(validationResult.validDevices);
 
         return result == validationResult.validDevices.size()
-                ? ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Hurra!", "Todos los devices actualizados bien"))
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("inesperado", INVISIBLE));
+                ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los devices actualizados bien")
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INVISIBLE);
 
     }
 

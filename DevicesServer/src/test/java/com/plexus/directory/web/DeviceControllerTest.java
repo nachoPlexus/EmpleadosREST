@@ -180,13 +180,13 @@ class DeviceControllerTest {
     void testUpdateDevices_Success() {
         when(facade.updateDevice(devices))
                 .thenReturn(ResponseEntity.status(HttpStatus.CREATED)
-                        .body(Map.of("Hurra!", "Todos los devices actualizados bien")));
+                        .body( "Todos los devices actualizados bien"));
 
-        ResponseEntity<Map<String, Object>> response = deviceController.updateDevices(devices);
+        ResponseEntity<String> response = deviceController.updateDevices(devices);
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertTrue(response.getBody().containsKey("Hurra!"));
+        assertTrue(response.getBody().contains("Hurra!"));
         verify(facade, times(1)).updateDevice(devices);
     }
 

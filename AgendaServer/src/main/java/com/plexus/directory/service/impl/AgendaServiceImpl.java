@@ -1,6 +1,8 @@
 package com.plexus.directory.service.impl;
 
-import com.plexus.directory.domain.model.EmployeeDto;
+import com.plexus.directory.domain.model.request.EmployeeRequest;
+import com.plexus.directory.domain.model.response.EmployeePageResponse;
+import com.plexus.directory.domain.model.response.EmployeeResponse;
 import com.plexus.directory.service.AgendaService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -11,33 +13,34 @@ import java.util.List;
 @Profile("versionBase")
 public class AgendaServiceImpl implements AgendaService {
 
+
     @Override
-    public List<EmployeeDto> getAll(int page, int size) {
-        return List.of();
+    public EmployeePageResponse getEmployeesPaged(int page, int size) {
+        return null;
     }
 
     @Override
-    public List<EmployeeDto> getByEmployeeName(String deviceName, int resolvedPage, int resolvedSize) {
-        return List.of();
+    public EmployeePageResponse getEmployeesByName(String employeeName, int resolvedPage, int resolvedSize) {
+        return null;
     }
 
     @Override
-    public List<EmployeeDto> getByEmployeeSurname(String deviceSurname, int resolvedPage, int resolvedSize) {
-        return List.of();
+    public EmployeePageResponse getEmployeesBySurname(String employeeSurname, int resolvedPage, int resolvedSize) {
+        return null;
     }
 
     @Override
-    public List<EmployeeDto> getByEmployeeId(String dev, int resolvedPage, int resolvedSize) {
-        return List.of();
+    public EmployeeResponse getEmployeeById(int employeeId) {
+        return null;
     }
 
     @Override
-    public int save(List<EmployeeDto> devices) {
-        return 0;
+    public String createEmployee(List<EmployeeRequest> employeeRequests) {
+        return "";
     }
 
     @Override
-    public int update(List<EmployeeDto> devices) {
-        return 0;
+    public String updateEmployee(List<EmployeeRequest> employeeRequests) {
+        return "";
     }
 }

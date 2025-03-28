@@ -33,7 +33,7 @@ public interface DevicesApi {
     );
 
     @PUT("devices")
-    Call<Map<String, Object>> updateDevices(
+    Call<String> updateDevices(
             @Body List<DeviceDto> devices
     );
 

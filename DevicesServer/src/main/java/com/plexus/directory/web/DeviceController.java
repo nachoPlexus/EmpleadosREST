@@ -49,7 +49,7 @@ public class DeviceController {
     }
 
     @PutMapping
-    public ResponseEntity<Map<String, Object>> updateDevices(@Valid @RequestBody List<DeviceDto> devices) {
+    public ResponseEntity<String> updateDevices(@Valid @RequestBody List<DeviceDto> devices) {
         return facade.updateDevice(devices);
     }
 

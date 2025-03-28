@@ -1,6 +1,5 @@
 package com.plexus.directory.domain.model;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 @Builder

@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DeviceFacade {
 
@@ -18,7 +17,7 @@ public interface DeviceFacade {
 
     ResponseEntity<String> createDevices(List<DeviceDto> devicesDto);
 
-    ResponseEntity<Map<String, Object>> updateDevice(@Valid List<DeviceDto> devices);
+    ResponseEntity<String> updateDevice(@Valid List<DeviceDto> devices);
 
     ResponseEntity<String> deleteDevices(List<DeviceDto> deviceDto);
 
