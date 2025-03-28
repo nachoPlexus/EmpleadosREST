@@ -1,6 +1,6 @@
 package com.plexus.directory.domain.mapper;
 
-import com.plexus.directory.domain.model.EmployeeDto;
+import com.plexus.directory.domain.Employee;
 import com.plexus.directory.domain.dto.EmployeeDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +16,7 @@ public interface EmployeeMapper {
     @Mapping(target = "clientId", source = "clientId")
     @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "phoneSerialNumber", source = "phoneSerialNumber")
-    EmployeeDto toDto(EmployeeDto responseEmloyee);
+    EmployeeDto toDto(Employee responseEmloyee);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
@@ -26,6 +26,6 @@ public interface EmployeeMapper {
     @Mapping(target = "clientId", source = "clientId")
     @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "phoneSerialNumber", source = "phoneSerialNumber")
-    EmployeeDto toEntity(EmployeeDto requestEmployee);
+    Employee toEntity(EmployeeDto requestEmployee);
 
 }

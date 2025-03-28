@@ -1,17 +1,17 @@
 package com.plexus.directory.service;
 
-import com.plexus.directory.domain.Employee;
+import com.plexus.directory.domain.model.EmployeeDto;
 
 import java.util.List;
 
 public interface AgendaService {
-    List<Employee> getAll(int page, int size);
+    List<EmployeeDto> getAll(int page, int size);
 
-    List<Employee> getByEmployeeName(String deviceName, int resolvedPage, int resolvedSize);
-    List<Employee> getByEmployeeSurname(String deviceSurname, int resolvedPage, int resolvedSize);
-    List<Employee> getByEmployeeId(String dev, int resolvedPage, int resolvedSize);
+    List<EmployeeDto> getByEmployeeName(String deviceName, int resolvedPage, int resolvedSize);
+    List<EmployeeDto> getByEmployeeSurname(String deviceSurname, int resolvedPage, int resolvedSize);
+    List<EmployeeDto> getByEmployeeId(String dev, int resolvedPage, int resolvedSize);
 
-    int save(List<Employee> devices);
+    int save(List<EmployeeDto> devices);
 
-    int update(List<Employee> devices);
+    int update(List<EmployeeDto> devices);
 }

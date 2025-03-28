@@ -1,22 +1,18 @@
 package com.plexus.directory.dao;
 
-import com.plexus.directory.domain.Device;
+import com.plexus.directory.domain.model.EmployeeDto;
 
 import java.util.List;
 
 public interface AgendaRepository {
-    List<Device> getAll(int page, int size);
+    List<EmployeeDto> getAll(int page, int size);
 
-    Device get(int deviceId);
+    List<EmployeeDto> getByEmployeeName(String deviceName, int resolvedPage, int resolvedSize);
+    List<EmployeeDto> getByEmployeeSurname(String deviceSurname, int resolvedPage, int resolvedSize);
+    List<EmployeeDto> getByEmployeeId(String dev, int resolvedPage, int resolvedSize);
 
-    List<Device> get(String brand, int resolvedPage, int resolvedSize);
+    int save(List<EmployeeDto> devices);
 
-    int countAll();
-
-    int save(List<Device> devices);
-
-    int update(List<Device> devices);
-
-    int delete(List<Device> device);
+    int update(List<EmployeeDto> devices);
 
 }

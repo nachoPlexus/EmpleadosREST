@@ -1,4 +1,4 @@
-package com.plexus.directory.domain;
+package com.plexus.directory.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EmployeePageResponse {
+public class EmployeePageDto {
     private List<EmployeeDto> employees;
     private int totalEmployees;
     private int pageNumber;

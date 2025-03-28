@@ -1,6 +1,6 @@
 package com.plexus.directory.service.impl;
 
-import com.plexus.directory.domain.Device;
+import com.plexus.directory.domain.model.DeviceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class AgendaServiceAsync {
         return CompletableFuture.completedFuture(service.countAll());
     }
     @Async
-    public CompletableFuture<Device> getAssignatedDevicesAsync() {
+    public CompletableFuture<DeviceDto> getAssignatedDevicesAsync() {
         return CompletableFuture.completedFuture(service.getAssignatedDevicesAsync());
     }
 }
