@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -37,13 +39,15 @@ public class DeviceFacadeImpl implements DeviceFacade {
     private final DeviceMapper mapper;
     private final DeviceServiceAsync asyncService;
     private final Validator validator;
+    private final View error;
 
     @Autowired
-    public DeviceFacadeImpl(DeviceServiceImpl service, DeviceMapper mapper, DeviceServiceAsync asyncService, Validator validator) {
+    public DeviceFacadeImpl(DeviceServiceImpl service, DeviceMapper mapper, DeviceServiceAsync asyncService, Validator validator, View error) {
         this.service = service;
         this.mapper = mapper;
         this.asyncService = asyncService;
         this.validator = validator;
+        this.error = error;
     }
 
     private static List<Device> wipeAllExceptIds(List<DeviceDto> devicesDto) {
@@ -95,7 +99,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
         Result validationResult = validateDevicesList(devicesDto);
         int result = service.save(validationResult.validDevices);
 
-        return result > validationResult.validDevices().size()
+        return result == validationResult.validDevices().size()
                 ? ResponseEntity.status(HttpStatus.CREATED).body("Devices creados bien")
                 : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INVISIBLE);
     }
@@ -123,13 +127,13 @@ public class DeviceFacadeImpl implements DeviceFacade {
 
     private Result validateDevicesList(List<DeviceDto> devicesDto) throws StatusException {
         List<Device> validDevices = new ArrayList<>();
-        List<String> errors = new ArrayList<>();
+        Map<String, Object> errors = new HashMap<>();
 
         for (DeviceDto dto : devicesDto) {
             Errors tempErrors = new BeanPropertyBindingResult(dto, "deviceDto");
             validator.validate(dto, tempErrors);
             if (tempErrors.hasErrors()) {
-                errors.add("Error en el dispositivo con serial " + dto.getSerialNumber() + ": " + tempErrors.getAllErrors());
+                errors.put("Error en el dispositivo con serial " + dto.getSerialNumber() + ": ", tempErrors.getAllErrors().stream().map(e-> e.getDefaultMessage()));
             } else {
                 validDevices.add(mapper.toEntity(dto));
             }
@@ -144,6 +148,8 @@ public class DeviceFacadeImpl implements DeviceFacade {
         return new Result(validDevices, errors);
     }
 
-    private record Result(List<Device> validDevices, List<String> errors) {
+    private record Result(List<Device> validDevices, Map
+            <String,
+                    java.lang.Object> errors) {
     }
 }
