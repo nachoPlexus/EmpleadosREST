@@ -13,4 +13,6 @@ public interface EmployeeRepository {
     boolean delete(Employee employee);
     int updateAllSurnamesToCamelCase();
     int countAll();
+
+    List<Employee> getBySurname(String surnameValue, int page, int size);
 }

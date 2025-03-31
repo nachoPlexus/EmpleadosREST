@@ -73,6 +73,16 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
         return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page));
     }
 
+
+    @Override
+    public ResponseEntity<EmployeePageResponse> getEmployeesbySurname(String surnameValue, int page, int size) {
+
+        List<EmployeeDto> employees = service.getBySurname(surnameValue,page,size)
+                .stream().map(mapper::toDto).toList();
+
+        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page));
+    }
+
     @Override
     public ResponseEntity<String> createEmployee(EmployeeDto employeeDTO) {
         int result = service.save(mapper.toEntity(employeeDTO));
@@ -101,4 +111,5 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
         return updated > 0 ? ResponseEntity.ok("Employees actualizados bien")
                 : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
     }
+
 }

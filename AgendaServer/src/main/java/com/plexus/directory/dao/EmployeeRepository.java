@@ -1,17 +1,22 @@
 package com.plexus.directory.dao;
 
 import com.plexus.directory.domain.model.EmployeeDto;
+import com.plexus.directory.domain.model.EmployeePageDto;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
+@Profile("versionBase")
 public interface EmployeeRepository {
-    List<EmployeeDto> getAll(int page, int size);
+    EmployeePageDto getAll(int page, int size);
 
-    List<EmployeeDto> getByEmployeeName(String deviceName, int page, int size);
+    EmployeePageDto getByEmployeeName(String deviceName, int page, int size);
 
-    List<EmployeeDto> getByEmployeeSurname(String deviceSurname, int page, int size);
+    EmployeePageDto getByEmployeeSurname(String deviceSurname, int page, int size);
 
-    List<EmployeeDto> getByEmployeeId(String dev, int page, int size);
+    EmployeeDto getEmployeeById(int id);
 
     int save(List<EmployeeDto> devices);
 

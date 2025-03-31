@@ -19,4 +19,5 @@ public interface DeviceRepository {
 
     int delete(List<Device> device);
 
+    Device getByAssignated(int employeeId);
 }

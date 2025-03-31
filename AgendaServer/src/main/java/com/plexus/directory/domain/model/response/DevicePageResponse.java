@@ -1,17 +1,15 @@
 package com.plexus.directory.domain.model.response;
 
-import com.plexus.directory.domain.model.DeviceDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DevicePageResponse {
-    private List<DeviceDto> deviceDtos;
+    private List<DeviceResponse> deviceDtos;
     private int totalDevices;
     private int pageNumber;
 }

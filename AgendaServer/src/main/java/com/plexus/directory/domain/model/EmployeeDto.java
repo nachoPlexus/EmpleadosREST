@@ -22,7 +22,7 @@ public class EmployeeDto {
 
     private String clientId;
 
-    private String phoneNumber;
+    private Integer  phoneNumber;
 
     private String phoneSerialNumber;
 }

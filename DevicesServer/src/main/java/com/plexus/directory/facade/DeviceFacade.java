@@ -21,4 +21,5 @@ public interface DeviceFacade {
 
     ResponseEntity<String> deleteDevices(List<DeviceDto> deviceDto);
 
+    ResponseEntity<DeviceDto> getByAssignatedEmployee(int deviceId);
 }

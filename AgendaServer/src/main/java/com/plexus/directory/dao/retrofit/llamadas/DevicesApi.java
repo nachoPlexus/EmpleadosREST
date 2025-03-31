@@ -5,7 +5,6 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DevicesApi {
 
@@ -18,6 +17,11 @@ public interface DevicesApi {
     @GET("devices/id/{deviceId}")
     Call<DeviceDto> getDeviceById(
             @Path("deviceId") int deviceId
+    );
+
+    @GET("devices/assignation/{employeeId}")
+    Call<DeviceDto> getDeviceByEmployeeId(
+           @Path("employeeId") int employeeId
     );
 
     @GET("devices/brand/{deviceBrand}")

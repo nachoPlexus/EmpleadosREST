@@ -16,7 +16,7 @@ public class DevicesApiConfig {
     private String baseUrl;
 
     @Bean
-    public Retrofit theOfficeRetrofit(OkHttpClient okHttpClient, Moshi moshi) {
+    public Retrofit devicesRetrofit(OkHttpClient okHttpClient, Moshi moshi) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
@@ -25,7 +25,7 @@ public class DevicesApiConfig {
     }
 
     @Bean
-    public DevicesApi theOfficeApi(Retrofit theOfficeRetrofit) {
-        return theOfficeRetrofit.create(DevicesApi.class);
+    public DevicesApi devicesApi(Retrofit devicesRetrofit) {
+        return devicesRetrofit.create(DevicesApi.class);
     }
 }

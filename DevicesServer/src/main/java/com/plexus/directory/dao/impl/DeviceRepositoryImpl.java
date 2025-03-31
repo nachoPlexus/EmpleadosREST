@@ -89,6 +89,22 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     }
 
     @Override
+    public Device getByAssignated(int employeeId) {
+        try (Connection conn = DriverManager.getConnection(DBURL); PreparedStatement stmt = conn.prepareStatement(GET_DEVICE_BY_ASSIGNED_ID)) {
+            stmt.setInt(1, employeeId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) return rowMapper.mapRow(rs, rs.getRow());
+        } catch (SQLException e) {
+            throw new DataBaseException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+
+        return new Device();
+    }
+
+    @Override
     public int countAll() {
 
         try (Connection conn = DriverManager.getConnection(DBURL); Statement stmt = conn.createStatement()) {
@@ -146,7 +162,7 @@ public class DeviceRepositoryImpl implements DeviceRepository {
             throw new StatusException(Map.of("Error en el borrado masivo", e.getMessage()));
         }
     }
-    
+
 
     private StringBuilder buildConsultaAdd(List<Device> devices) {
         StringBuilder sql = new StringBuilder("INSERT INTO devices (serial_number, brand, model, os, assigned_to) VALUES ");

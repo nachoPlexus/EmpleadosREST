@@ -84,6 +84,12 @@ public class DeviceFacadeImpl implements DeviceFacade {
     public ResponseEntity<DeviceDto> getDeviceById(int deviceId) {
         return ResponseEntity.ok(mapper.toDto(service.getById(deviceId)));
     }
+    
+
+    @Override
+    public ResponseEntity<DeviceDto> getByAssignatedEmployee(int employeeId) {
+        return ResponseEntity.ok(mapper.toDto(service.getByAssignated(employeeId)));
+    }
 
     @Override
     public ResponseEntity<DevicePageResponse> getDevicesByBrand(String brand, int resolvedPage, int resolvedSize) {

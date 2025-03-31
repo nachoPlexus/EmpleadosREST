@@ -18,6 +18,7 @@ public interface EmployeeMapper {
     @Mapping(target = "phoneSerialNumber", source = "phoneSerialNumber")
     EmployeeDto toDto(Employee responseEmloyee);
 
+
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "surname", source = "surname")

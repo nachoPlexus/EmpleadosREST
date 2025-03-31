@@ -12,17 +12,16 @@ public class AgendaServiceAsync {
 
     private final AgendaServiceImpl service;
 
-    @Autowired
     public AgendaServiceAsync(AgendaServiceImpl service) {
         this.service = service;
     }
 
-    @Async
-    public CompletableFuture<Integer> getDevicesCountAsync() {
-        return CompletableFuture.completedFuture(service.countAll());
-    }
-    @Async
-    public CompletableFuture<DeviceDto> getAssignatedDevicesAsync() {
-        return CompletableFuture.completedFuture(service.getAssignatedDevicesAsync());
-    }
+//    @Async
+//    public CompletableFuture<Integer> getDevicesCountAsync() {
+//        return CompletableFuture.completedFuture(service.countAll());
+//    }
+//    @Async
+//    public CompletableFuture<DeviceDto> getAssignatedDevicesAsync() {
+//        return CompletableFuture.completedFuture(service.getAssignatedDevicesAsync());
+//    }
 }

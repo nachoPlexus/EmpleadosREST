@@ -52,4 +52,9 @@ public class DeviceServiceImpl implements DeviceService {
         return dao.delete(devices);
     }
 
+    @Override
+    public Device getByAssignated(int employeeId) {
+        return dao.getByAssignated(employeeId);
+    }
+
 }

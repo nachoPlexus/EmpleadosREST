@@ -7,10 +7,10 @@ import retrofit2.http.*;
 
 public interface EmployeesApi {
 
-    @GET("employees")
+    @GET("employees/{page}/{size}")
     Call<EmployeePageDto> getEmployees(
-            @Query("page") int page,
-            @Query("size") int size
+            @Path("page") int page,
+            @Path("size") int size
     );
 
     @GET("employees/id/{employeeId}")
@@ -21,6 +21,13 @@ public interface EmployeesApi {
     @GET("employees/name/{employeeName}")
     Call<EmployeePageDto> getEmployeesByName(
             @Path("employeeName") String employeeName,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
+    @GET("employees/surname/{employeeSurname}")
+    Call<EmployeePageDto> getEmployeesBySurname(
+            @Path("employeeSurname") String employeeName,
             @Query("page") int page,
             @Query("size") int size
     );

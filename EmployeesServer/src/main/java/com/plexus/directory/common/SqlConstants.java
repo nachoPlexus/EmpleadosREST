@@ -6,6 +6,7 @@ public class SqlConstants {
     public static final String SELECT_FORM_EMLOYEES = "SELECT * FROM employees LIMIT ? OFFSET ?;";
     public static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employees WHERE id = ?";
     public static final String GET_EMPLOYEE_BY_NAME = "SELECT * FROM employees WHERE name LIKE ? LIMIT ? OFFSET ?";
+    public static final String GET_EMPLOYEE_BY_SURNAME = "SELECT * FROM employees WHERE surname LIKE ? LIMIT ? OFFSET ?";
     public static final String INSERT_EMPLOYEE = "INSERT INTO employees (name, surname, mail_plexus, mail_client, client_id, phone_number, phone_serial_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String UPDATE_EMPLOYEE = "UPDATE employees SET name = ?, surname = ?, mail_plexus = ? WHERE id = ?";
     public static final String DELETE_EMPLOYEE = "DELETE FROM employees where id=?";

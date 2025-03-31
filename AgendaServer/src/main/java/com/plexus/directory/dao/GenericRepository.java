@@ -4,12 +4,16 @@ import com.plexus.directory.domain.error.BadRequestException;
 import com.plexus.directory.domain.error.DataBaseException;
 import com.plexus.directory.domain.error.NoContentException;
 import com.plexus.directory.domain.error.StatusException;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.Map;
 
+@Repository
+@Profile("versionBase")
 public abstract class GenericRepository {
     protected <T> T safeApiCall(Call<T> call) throws StatusException, DataBaseException, BadRequestException {
         try { Response<T> response = call.execute();

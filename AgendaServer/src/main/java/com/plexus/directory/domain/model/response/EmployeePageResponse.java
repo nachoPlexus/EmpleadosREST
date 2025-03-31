@@ -1,17 +1,17 @@
 package com.plexus.directory.domain.model.response;
 
 import com.plexus.directory.domain.model.EmployeeDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EmployeePageResponse {
-    private List<EmployeeDto> employees;
-    private int totalEmployees;
+    private List<EmployeeResponse> employees;
     private int pageNumber;
+    private int totalEmployees;
 }

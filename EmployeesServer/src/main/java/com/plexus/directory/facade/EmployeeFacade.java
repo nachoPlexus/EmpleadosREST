@@ -18,4 +18,6 @@ public interface EmployeeFacade {
       ResponseEntity<String> deleteEmployee(int employeeId);
 
       ResponseEntity<String> updateAllSurnamesToCamelCase();
+
+    ResponseEntity<EmployeePageResponse> getEmployeesbySurname(String surnameValue, int page, int size);
 }

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8080")
@@ -41,6 +40,11 @@ public class DeviceController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         return facade.getDevicesByBrand(deviceBrand,page-1,size);
+    }
+
+    @GetMapping("/assignation/{deviceId}")
+    public ResponseEntity<DeviceDto>getByAssignatedPatient(@PathVariable int deviceId){
+        return facade.getByAssignatedEmployee(deviceId);
     }
 
     @PostMapping

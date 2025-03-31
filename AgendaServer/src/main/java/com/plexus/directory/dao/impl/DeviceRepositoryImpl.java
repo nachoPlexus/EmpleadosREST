@@ -5,16 +5,19 @@ import com.plexus.directory.dao.GenericRepository;
 import com.plexus.directory.dao.retrofit.llamadas.DevicesApi;
 import com.plexus.directory.domain.model.DeviceDto;
 import com.plexus.directory.domain.model.DevicePageDto;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
+@Profile("versionBase")
 public class DeviceRepositoryImpl extends GenericRepository implements DeviceRepository {
     private final DevicesApi api;
 
     public DeviceRepositoryImpl(DevicesApi api) {
         this.api = api;
     }
-
 
     @Override
     public DevicePageDto getAll(int page, int size) {
@@ -24,6 +27,11 @@ public class DeviceRepositoryImpl extends GenericRepository implements DeviceRep
     @Override
     public DeviceDto get(int id) {
         return safeApiCall(api.getDeviceById(id));
+    }
+
+    @Override
+    public DeviceDto getAssignation(int assignedEmployeeId) {
+        return safeApiCall(api.getDeviceByEmployeeId(assignedEmployeeId));
     }
 
     @Override

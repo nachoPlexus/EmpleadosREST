@@ -90,6 +90,28 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
         }
     }
 
+
+    @Override
+    public List<Employee> getBySurname(String surnameValue, int page, int size) {
+        try (Connection conn = DriverManager.getConnection(Constants.DBURL);
+             PreparedStatement stmt = conn.prepareStatement(GET_EMPLOYEE_BY_SURNAME)) {
+
+            stmt.setString(1, "%"+surnameValue+"%");
+            stmt.setInt(2, size);
+            stmt.setInt(3, page * size);
+
+            ResultSet rs = stmt.executeQuery();
+            List<Employee> employees = new ArrayList<>();
+            while (rs.next())
+                employees.add(rowMapper.mapRow(rs, rs.getRow()));
+            return employees;
+        } catch (SQLException e) {
+            throw new DataBaseException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
     @Override
     public int save(Employee employee) {
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);

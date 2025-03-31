@@ -46,6 +46,19 @@ public class EmployeeController {
         return facade.getEmployeesByName(employeeName,resolvedPage,resolvedSize);
     }
 
+    @GetMapping({"/surname/{surnameValue}"})
+    public ResponseEntity<EmployeePageResponse> getEmployeesBySurname(
+            @PathVariable String surnameValue,
+            @PathVariable(required = false) Integer page,
+            @PathVariable(required = false) Integer size) {
+        //TODO si explico codigo que he duplicado quito el comentario de el duplicado? NO HAGO EL COUNT DEL TOTAL
+        //los page y size por defecto
+        int resolvedPage = (page != null) ? page - 1 : 0;
+        int resolvedSize = (size != null) ? size : 10;
+
+        return facade.getEmployeesbySurname(surnameValue,resolvedPage,resolvedSize);
+    }
+
     @PostMapping
     public ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeDto employee) {
         return facade.createEmployee(employee);

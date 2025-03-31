@@ -18,4 +18,6 @@ public interface DeviceService {
     int update(List<Device> devices);
 
     int delete(List<Device> devices);
+
+    Device getByAssignated(int employeeId);
 }

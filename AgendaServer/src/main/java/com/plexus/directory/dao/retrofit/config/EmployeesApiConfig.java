@@ -16,7 +16,7 @@ public class EmployeesApiConfig {
     private String baseUrl;
 
     @Bean
-    public Retrofit anotherRetrofit(OkHttpClient okHttpClient, Moshi moshi) {
+    public Retrofit employeesRetrofit(OkHttpClient okHttpClient, Moshi moshi) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
@@ -25,7 +25,7 @@ public class EmployeesApiConfig {
     }
 
     @Bean
-    public EmployeesApi anotherApi(Retrofit anotherRetrofit) {
-        return anotherRetrofit.create(EmployeesApi.class);
+    public EmployeesApi employeesApi(Retrofit employeesRetrofit) {
+        return employeesRetrofit.create(EmployeesApi.class);
     }
 }

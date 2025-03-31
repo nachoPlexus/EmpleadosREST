@@ -26,7 +26,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return dao.countAll();
     }
 
-
     public Employee getById(int employeeId) {
         return dao.get(employeeId);
     }
@@ -34,6 +33,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> getByName(String employeeName,int resolvedPage, int resolvedSize) {
         return dao.get(employeeName, resolvedPage,resolvedSize);
+    }
+
+    @Override
+    public List<Employee> getBySurname(String surnameValue, int page, int size) {
+        return dao.getBySurname(surnameValue,page,size);
     }
 
     @Transactional
@@ -54,4 +58,5 @@ public class EmployeeServiceImpl implements EmployeeService {
     public int updateAllSurnamesToCamelCase() {
         return dao.updateAllSurnamesToCamelCase();
     }
+
 }
