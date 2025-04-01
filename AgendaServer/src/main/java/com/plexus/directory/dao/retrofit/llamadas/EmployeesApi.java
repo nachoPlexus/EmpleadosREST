@@ -42,9 +42,6 @@ public interface EmployeesApi {
             @Body EmployeeDto employee
     );
 
-    @PUT("employees/surnames")
-    Call<String> updateAllSurnames();
-
     @DELETE("employees/{employeeId}")
     Call<String> deleteEmployee(
             @Path("employeeId") int employeeId

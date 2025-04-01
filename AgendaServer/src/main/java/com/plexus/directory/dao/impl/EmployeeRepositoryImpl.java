@@ -6,7 +6,6 @@ import com.plexus.directory.dao.retrofit.llamadas.EmployeesApi;
 import com.plexus.directory.domain.error.StatusException;
 import com.plexus.directory.domain.model.EmployeeDto;
 import com.plexus.directory.domain.model.EmployeePageDto;
-import com.plexus.directory.domain.model.response.EmployeePageResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -60,12 +59,26 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
     public int update(List<EmployeeDto> employees) {
         int sizeUpdated = 0;
         for (EmployeeDto e:employees){
-            String result = safeApiCall(api.createEmployee(e));
+            String result = safeApiCall(api.updateEmployee(e));
             if (result.equalsIgnoreCase("Employee actualizado bien"))
                 sizeUpdated++;
         }
         if (sizeUpdated!= employees.size())
             throw new StatusException(Map.of("UpdatingError","Se han actualizado menos employees que los enviados"));
         return 1;
+    }
+
+    @Override
+    public int delete(List<EmployeeDto> employees){
+        int sizeUpdated = 0;
+        for (EmployeeDto e:employees){
+            String result = safeApiCall(api.deleteEmployee(e.getId()));
+            if (result.equalsIgnoreCase("Employee actualizado bien"))
+                sizeUpdated++;
+        }
+        if (sizeUpdated!= employees.size())
+            throw new StatusException(Map.of("UpdatingError","Se han actualizado menos employees que los enviados"));
+        return 1;
+
     }
 }

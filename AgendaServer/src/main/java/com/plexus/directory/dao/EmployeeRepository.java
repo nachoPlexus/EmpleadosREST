@@ -21,4 +21,6 @@ public interface EmployeeRepository {
     int save(List<EmployeeDto> devices);
 
     int update(List<EmployeeDto> devices);
+
+    int delete(List<EmployeeDto> employees);
 }

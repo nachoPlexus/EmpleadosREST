@@ -2,6 +2,7 @@ package com.plexus.directory.service.impl;
 
 import com.plexus.directory.dao.DeviceRepository;
 import com.plexus.directory.dao.EmployeeRepository;
+import com.plexus.directory.domain.error.StatusException;
 import com.plexus.directory.domain.mapper.DeviceMapper;
 import com.plexus.directory.domain.mapper.EmployeeMapper;
 import com.plexus.directory.domain.model.DeviceDto;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AgendaServiceImpl implements AgendaService {
@@ -80,8 +82,34 @@ public class AgendaServiceImpl implements AgendaService {
     @Override
     public String updateEmployee(List<EmployeeRequest> employeeRequests) {
         List<EmployeeDto> employeesToUpdate = new ArrayList<>();
-        List<DeviceDto>
-
-        return "ok";
+        List<EmployeeDto> employeesToDelete = new ArrayList<>();
+        List<DeviceDto> devicesToUnlink = new ArrayList<>();
+        List<DeviceDto> devicesToAdd= new ArrayList<>();
+        for (EmployeeRequest er: employeeRequests){
+            if (er.isDeleteEmployee()){
+                employeesToDelete.add(employeeMapper.toDto(er));
+                er.setDeleteAssignedDevice(true);
+            }else {
+                employeesToUpdate.add(employeeMapper.toDto(er));
+            }
+            if (er.isDeleteAssignedDevice()){
+                try{
+                    DeviceDto deviceDto=deviceRepository.getAssignation(er.getId()); deviceDto.setAssignedTo(-1);
+                    devicesToUnlink.add(deviceDto);
+                }catch (Exception e){
+                    throw new StatusException(Map.of("DeletingAssignedDeviceError","There was an error while trying to delete the assigned device for the employee\"+er+\", nothing was done.",
+                            "Details",e.getMessage()));
+                }
+            }else if (er.getAssignedDevice()!=null){
+                devicesToAdd.add(deviceMapper.toDto(er.getAssignedDevice()));
+            }
+        }
+        if (
+            deviceRepository.update(devicesToUnlink)+
+            employeeRepository.update(employeesToUpdate)+
+            employeeRepository.delete(employeesToDelete)+
+            deviceRepository.save(devicesToAdd)==4)
+            return "ok";
+        return "mal";
     }
 }
