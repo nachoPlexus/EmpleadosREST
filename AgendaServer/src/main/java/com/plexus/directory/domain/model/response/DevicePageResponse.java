@@ -1,6 +1,9 @@
 package com.plexus.directory.domain.model.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +13,6 @@ import java.util.List;
 @Builder
 public class DevicePageResponse {
     private List<DeviceResponse> deviceDtos;
-    private int totalDevices;
     private int pageNumber;
+    private int totalDevices;
 }

@@ -18,7 +18,6 @@ public class AgendaController {
         this.facade = facade;
     }
 
-    //TODO LLLAMADA A GETALL(CON PAGINACION)
     @GetMapping({"/{page}/{size}", "/"})
     public ResponseEntity<EmployeePageResponse> getEmployees(
             @PathVariable(required = false) Integer page,
@@ -49,13 +48,11 @@ public class AgendaController {
         };
     }
 
-    //TODO LLAMADA AL ADD EMPLOYEE CON O SIN DEVICES
     @PostMapping
     public ResponseEntity<String> createDevices( @RequestBody List<EmployeeRequest> employeeRequests) {
         return facade.createEmployees(employeeRequests);
     }
 
-    //TODO LLAMADA AL UPDATE EMPLOYEE CON DEVICES
     @PutMapping
     public ResponseEntity<String> updateDevices( @RequestBody List<EmployeeRequest> employeeRequests) {
         return facade.updateEmployee(employeeRequests);

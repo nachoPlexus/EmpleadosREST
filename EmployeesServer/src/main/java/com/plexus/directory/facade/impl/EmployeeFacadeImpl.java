@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.plexus.directory.common.Constants.INVISIBLE;
-
 @Slf4j
 @Component
 @Profile("versionBase")

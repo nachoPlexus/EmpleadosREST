@@ -71,7 +71,7 @@ public class AgendaServiceImpl implements AgendaService {
         employeeRequests.forEach(em->{
             employeesToADD.add(employeeMapper.toDto(em));
             if (em.getAssignedDevice()!=null){
-                devicesToAdd.addFirst(deviceMapper.toDto(em.getAssignedDevice()));
+                devicesToAdd.add(0,deviceMapper.toDto(em.getAssignedDevice()));
             }
         });
         employeeRepository.save(employeesToADD);
@@ -97,15 +97,15 @@ public class AgendaServiceImpl implements AgendaService {
                     DeviceDto deviceDto=deviceRepository.getAssignation(er.getId()); deviceDto.setAssignedTo(-1);
                     devicesToUnlink.add(deviceDto);
                 }catch (Exception e){
-                    throw new StatusException(Map.of("DeletingAssignedDeviceError","There was an error while trying to delete the assigned device for the employee\"+er+\", nothing was done.",
+                    throw new StatusException(Map.of("DeletingAssignedDeviceError",
+                            "There was an error while trying to delete the assigned device for the employee"+er+", nothing was done.",
                             "Details",e.getMessage()));
                 }
             }else if (er.getAssignedDevice()!=null){
                 devicesToAdd.add(deviceMapper.toDto(er.getAssignedDevice()));
             }
         }
-        if (
-            deviceRepository.update(devicesToUnlink)+
+        if (deviceRepository.update(devicesToUnlink)+
             employeeRepository.update(employeesToUpdate)+
             employeeRepository.delete(employeesToDelete)+
             deviceRepository.save(devicesToAdd)==4)

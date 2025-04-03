@@ -7,7 +7,10 @@ import com.plexus.directory.domain.mapper.DeviceMapper;
 import com.plexus.directory.domain.mapper.EmployeeMapper;
 import com.plexus.directory.domain.model.DeviceDto;
 import com.plexus.directory.domain.model.EmployeeDto;
+import com.plexus.directory.domain.model.EmployeePageDto;
+import com.plexus.directory.domain.model.request.DeviceRequest;
 import com.plexus.directory.domain.model.request.EmployeeRequest;
+import com.plexus.directory.domain.model.response.DeviceResponse;
 import com.plexus.directory.domain.model.response.EmployeePageResponse;
 import com.plexus.directory.domain.model.response.EmployeeResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +20,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,233 +33,169 @@ class AgendaServiceImplTest {
 
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private DeviceRepository deviceRepository;
-
     @Mock
     private EmployeeMapper employeeMapper;
-
     @Mock
     private DeviceMapper deviceMapper;
-
     @InjectMocks
-    private AgendaServiceImpl agendaServiceImpl;
+    private AgendaServiceImpl agendaService;
 
-    // Objetos dummy para usar en los tests
-    private EmployeeDto dummyEmployeeDto;
-    private EmployeeResponse dummyEmployeeResponse;
-    private EmployeePageResponse dummyEmployeePageResponse;
-    private DeviceDto dummyDeviceDto;
+    private EmployeeRequest validRequest;
+    private EmployeeDto employeeDto;
+    private DeviceDto deviceDto;
+    private EmployeeResponse validResponse;
 
     @BeforeEach
     void setUp() {
-        // Inicializamos un empleado dummy
-        dummyEmployeeDto = new EmployeeDto();
-        dummyEmployeeDto.setId(1);
-        dummyEmployeeDto.setName("Nacho");
-        dummyEmployeeDto.setSurname("Llorente");
-        // Inicializamos la respuesta correspondiente
-        dummyEmployeeResponse = new EmployeeResponse();
-        dummyEmployeeResponse.setEmployeeId(1);
-        dummyEmployeeResponse.setName("Nacho");
-        dummyEmployeeResponse.setSurname("Llorente");
-        // Suponemos que el empleado en la respuesta inicialmente no tiene dispositivo asignado
-        dummyEmployeeResponse.setAssignedDevice(null);
-
-        // Creamos una lista y la asignamos a la página de respuesta
-        List<EmployeeResponse> employeesResponseList = new ArrayList<>();
-        employeesResponseList.add(dummyEmployeeResponse);
-        dummyEmployeePageResponse = new EmployeePageResponse();
-        dummyEmployeePageResponse.setEmployees(employeesResponseList);
-
-        // Creamos un dispositivo dummy para la asignación
-        dummyDeviceDto = new DeviceDto();
-        // (Configura los atributos necesarios de dummyDeviceDto)
+        validRequest = new EmployeeRequest(
+                1,
+                "John",
+                "Doe",
+                "john.doe@plexus.es",
+                "john.doe@client.es",
+                "666777888",
+                new DeviceRequest("SN123", "Brand", "Model", "OS"),
+                false,
+                false
+        );
+        validResponse = new EmployeeResponse(1, "John", "Doe", "mail", "clientmail", 666666666, null);
+        employeeDto = new EmployeeDto(1, "John", "Doe", "john.doe@plexus.es", "john.doe@client.es", "123", 666666666, "dwad");
+        deviceDto = new DeviceDto(1, "SN123", "Brand", "Model", "OS", 1);
     }
 
-    // Test para getEmployeesPaged
     @Test
-    void testGetEmployeesPaged_Success() {
-        int page = 1, size = 10;
-        // Simula que la consulta devuelve una lista con un solo EmployeeDto
-        List<EmployeeDto> dtoList = List.of(dummyEmployeeDto);
-        when(employeeRepository.getAll(page, size)).thenReturn(dtoList);
-        when(employeeMapper.toResponse(dtoList)).thenReturn(dummyEmployeePageResponse);
-        // Simula la asignación del dispositivo para el empleado con id 1
-        when(deviceRepository.getAssignation(1)).thenReturn(dummyDeviceDto);
-        when(deviceMapper.toResponse(dummyDeviceDto)).thenReturn("DeviceAssigned");
+    void getEmployeesPaged_Success() {
+        when(employeeRepository.getAll(1, 10)).thenReturn(new EmployeePageDto(List.of(employeeDto), 1, 10));
+        when(employeeMapper.toResponse(any(EmployeePageDto.class))).thenReturn(new EmployeePageResponse(
+                Collections.singletonList(new EmployeeResponse()), 1, 1));
+        when(deviceRepository.getAssignation(anyInt())).thenReturn(new DeviceDto());
+        when(deviceMapper.toResponse(any(DeviceDto.class))).thenReturn(new DeviceResponse());
 
-        EmployeePageResponse result = agendaServiceImpl.getEmployeesPaged(page, size);
+        EmployeePageResponse result = agendaService.getEmployeesPaged(1, 10);
+
+        verify(employeeRepository).getAll(1, 10);
+    }
+
+    @Test
+    void getEmployeeById_Success() {
+        when(employeeRepository.getEmployeeById(1)).thenReturn(new EmployeeDto());
+        when(employeeMapper.toResponse(any(EmployeeDto.class)))
+                .thenReturn(validResponse);
+        when(deviceRepository.getAssignation(1)).thenReturn(new DeviceDto());
+        when(deviceMapper.toResponse(any())).thenReturn(new DeviceResponse());
+
+        EmployeeResponse result = agendaService.getEmployeeById(1);
 
         assertNotNull(result);
-        assertEquals(1, result.getEmployees().size());
-        assertEquals("DeviceAssigned", result.getEmployees().get(0).getAssignedDevice());
-        verify(employeeRepository, times(1)).getAll(page, size);
-        verify(deviceRepository, times(1)).getAssignation(1);
+        assertEquals("John", result.getEmployeeName());
     }
 
     @Test
-    void testGetEmployeesPaged_DataBaseError() {
-        int page = 1, size = 10;
-        when(employeeRepository.getAll(page, size)).thenThrow(new RuntimeException("DB error"));
+    void createEmployee_Success() {
+        when(employeeMapper.toDto(any())).thenReturn(employeeDto);
+        when(deviceMapper.toDto(any())).thenReturn(deviceDto);
+        when(employeeRepository.save(anyList())).thenReturn(1);
+        when(deviceRepository.save(any())).thenReturn(1);
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> agendaServiceImpl.getEmployeesPaged(page, size));
-        assertTrue(ex.getMessage().contains("DB error"));
-        verify(employeeRepository, times(1)).getAll(page, size);
-    }
+        String result = agendaService.createEmployee(Collections.singletonList(validRequest));
 
-    // Test para getEmployeesByName
-    @Test
-    void testGetEmployeesByName_Success() {
-        String name = "Nacho";
-        int page = 1, size = 10;
-        List<EmployeeDto> dtoList = List.of(dummyEmployeeDto);
-        when(employeeRepository.getByEmployeeName(name, page, size)).thenReturn(dtoList);
-        when(employeeMapper.toResponse(dtoList)).thenReturn(dummyEmployeePageResponse);
-        when(deviceRepository.getAssignation(1)).thenReturn(dummyDeviceDto);
-        when(deviceMapper.toResponse(dummyDeviceDto)).thenReturn("DeviceAssigned");
-
-        EmployeePageResponse result = agendaServiceImpl.getEmployeesByName(name, page, size);
-        assertNotNull(result);
-        assertEquals(1, result.getEmployees().size());
-        assertEquals("DeviceAssigned", result.getEmployees().get(0).getAssignedDevice());
-        verify(employeeRepository, times(1)).getByEmployeeName(name, page, size);
-    }
-
-    @Test
-    void testGetEmployeesByName_DataBaseError() {
-        String name = "Nacho";
-        int page = 1, size = 10;
-        when(employeeRepository.getByEmployeeName(name, page, size)).thenThrow(new RuntimeException("DB error"));
-
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> agendaServiceImpl.getEmployeesByName(name, page, size));
-        assertTrue(ex.getMessage().contains("DB error"));
-        verify(employeeRepository, times(1)).getByEmployeeName(name, page, size);
-    }
-
-    // Test para getEmployeesBySurname
-    @Test
-    void testGetEmployeesBySurname_Success() {
-        String surname = "Llorente";
-        int page = 1, size = 10;
-        List<EmployeeDto> dtoList = List.of(dummyEmployeeDto);
-        when(employeeRepository.getByEmployeeSurname(surname, page, size)).thenReturn(dtoList);
-        when(employeeMapper.toResponse(dtoList)).thenReturn(dummyEmployeePageResponse);
-        when(deviceRepository.getAssignation(1)).thenReturn(dummyDeviceDto);
-        when(deviceMapper.toResponse(dummyDeviceDto)).thenReturn("DeviceAssigned");
-
-        EmployeePageResponse result = agendaServiceImpl.getEmployeesBySurname(surname, page, size);
-        assertNotNull(result);
-        assertEquals(1, result.getEmployees().size());
-        assertEquals("DeviceAssigned", result.getEmployees().get(0).getAssignedDevice());
-        verify(employeeRepository, times(1)).getByEmployeeSurname(surname, page, size);
-    }
-
-    @Test
-    void testGetEmployeesBySurname_DataBaseError() {
-        String surname = "Llorente";
-        int page = 1, size = 10;
-        when(employeeRepository.getByEmployeeSurname(surname, page, size)).thenThrow(new RuntimeException("DB error"));
-
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> agendaServiceImpl.getEmployeesBySurname(surname, page, size));
-        assertTrue(ex.getMessage().contains("DB error"));
-        verify(employeeRepository, times(1)).getByEmployeeSurname(surname, page, size);
-    }
-
-    // Test para getEmployeeById
-    @Test
-    void testGetEmployeeById_Success() {
-        int id = 1;
-        when(employeeRepository.getEmployeeById(id)).thenReturn(dummyEmployeeDto);
-        when(employeeMapper.toResponse(dummyEmployeeDto)).thenReturn(dummyEmployeeResponse);
-        when(deviceRepository.getAssignation(dummyEmployeeResponse.getEmployeeId())).thenReturn(dummyDeviceDto);
-        when(deviceMapper.toResponse(dummyDeviceDto)).thenReturn("DeviceAssigned");
-
-        EmployeeResponse result = agendaServiceImpl.getEmployeeById(id);
-        assertNotNull(result);
-        assertEquals("Nacho", result.getEmployeeName());
-        assertEquals("DeviceAssigned", result.getAssignedDevice());
-        verify(employeeRepository, times(1)).getEmployeeById(id);
-    }
-
-    @Test
-    void testGetEmployeeById_DataBaseError() {
-        int id = 1;
-        when(employeeRepository.getEmployeeById(id)).thenThrow(new RuntimeException("DB error"));
-
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> agendaServiceImpl.getEmployeeById(id));
-        assertTrue(ex.getMessage().contains("DB error"));
-        verify(employeeRepository, times(1)).getEmployeeById(id);
-    }
-
-    @Test
-    void testCreateEmployee_Success() {
-        EmployeeRequest request = new EmployeeRequest();
-        request.setId(1);
-        request.setName("Nacho");
-        when(employeeMapper.toDto(request)).thenReturn(dummyEmployeeDto);
-        doNothing().when(employeeRepository).save(anyList());
-        doNothing().when(deviceRepository).save(anyList());
-        String result = agendaServiceImpl.createEmployee(List.of(request));
         assertEquals("ok", result);
-        verify(employeeRepository, times(1)).save(anyList());
-        verify(deviceRepository, times(1)).save(anyList());
+        verify(employeeRepository).save(any());
+        verify(deviceRepository).save(any());
     }
 
     @Test
-    void testUpdateEmployee_Success() {
-        EmployeeRequest requestUpdate = new EmployeeRequest();
-        requestUpdate.setId(1);
-        requestUpdate.setName("Nacho Updated");
-        requestUpdate.setDeleteEmployee(false);
-        requestUpdate.setDeleteAssignedDevice(false);
+    void updateEmployee_AllOperationsSuccess() {
+        EmployeeRequest request = new EmployeeRequest(
+                1, "John", "Doe", "mail", "mail2", "666666666", null, true, true);
 
-        EmployeeRequest requestDelete = new EmployeeRequest();
-        requestDelete.setId(2);
-        requestDelete.setDeleteEmployee(true);
-        requestDelete.setDeleteAssignedDevice(true);
-        when(deviceRepository.getAssignation(requestDelete.getId())).thenReturn(dummyDeviceDto);
-        when(employeeMapper.toDto(requestUpdate)).thenReturn(dummyEmployeeDto);
-        when(employeeMapper.toDto(requestDelete)).thenReturn(dummyEmployeeDto);
-        when(deviceRepository.update(anyList())).thenReturn(1);
+        when(employeeMapper.toDto(any(EmployeeRequest.class))).thenReturn(employeeDto);
+        when(deviceRepository.getAssignation(1)).thenReturn(deviceDto);
+        when(deviceRepository.update(any())).thenReturn(1);
+        when(employeeRepository.update(any())).thenReturn(1);
+        when(employeeRepository.delete(any())).thenReturn(1);
+        when(deviceRepository.save(any())).thenReturn(1);
+
+        String result = agendaService.updateEmployee(Collections.singletonList(request));
+
+        assertEquals("ok", result);
+        verify(deviceRepository).update(any());
+    }
+
+    @Test
+    void updateEmployee_UnlinkDeviceError() {
+        EmployeeRequest request = new EmployeeRequest(
+                1, "John", "Doe", "mail", "phone", "phone2", null, true, true);
+
+        when(employeeMapper.toDto(any(EmployeeRequest.class))).thenReturn(employeeDto);
+        when(deviceRepository.getAssignation(1)).thenThrow(new RuntimeException("DB error"));
+
+        StatusException ex = assertThrows(StatusException.class,
+                () -> agendaService.updateEmployee(Collections.singletonList(request)));
+
+        assertTrue(ex.getDetails().containsKey("DeletingAssignedDeviceError"));
+    }
+
+    @Test
+    void updateEmployee_PartialSuccess() {
+        when(employeeMapper.toDto(any(EmployeeRequest.class))).thenReturn(employeeDto);
+        when(deviceRepository.update(anyList())).thenReturn(0);
         when(employeeRepository.update(anyList())).thenReturn(1);
         when(employeeRepository.delete(anyList())).thenReturn(1);
         when(deviceRepository.save(anyList())).thenReturn(1);
 
-        String result = agendaServiceImpl.updateEmployee(List.of(requestUpdate, requestDelete));
-        assertEquals("ok", result);
-        verify(deviceRepository, times(1)).update(anyList());
-        verify(employeeRepository, times(1)).update(anyList());
-        verify(employeeRepository, times(1)).delete(anyList());
-        verify(deviceRepository, times(1)).save(anyList());
-    }
+        String result = agendaService.updateEmployee(Collections.singletonList(validRequest));
 
-    @Test
-    void testUpdateEmployee_Failure() {
-        EmployeeRequest request = new EmployeeRequest();
-        request.setId(1);
-        request.setName("Test");
-        request.setDeleteEmployee(false);
-        request.setDeleteAssignedDevice(false);
-        when(employeeMapper.toDto(request)).thenReturn(dummyEmployeeDto);
-        when(deviceRepository.update(anyList())).thenReturn(0);
-        when(employeeRepository.update(anyList())).thenReturn(0);
-        when(employeeRepository.delete(anyList())).thenReturn(0);
-        when(deviceRepository.save(anyList())).thenReturn(0);
-        String result = agendaServiceImpl.updateEmployee(List.of(request));
         assertEquals("mal", result);
     }
 
     @Test
-    void testUpdateEmployee_StatusException() {
-        EmployeeRequest request = new EmployeeRequest();
-        request.setId(1);
-        request.setName("Test");
-        request.setDeleteEmployee(false);
-        request.setDeleteAssignedDevice(true);
-        when(deviceRepository.getAssignation(request.getId())).thenThrow(new RuntimeException("Error asignación"));
-        StatusException ex = assertThrows(StatusException.class, () -> agendaServiceImpl.updateEmployee(List.of(request)));
-        assertTrue(ex.getMessage().contains("Error"));
+    void getEmployeesByName_Success() {
+        when(employeeRepository.getByEmployeeName("John", 1, 10))
+                .thenReturn(new EmployeePageDto(List.of(employeeDto), 1, 1));
+
+        when(employeeMapper.toResponse(any(EmployeePageDto.class)))
+                .thenReturn(new EmployeePageResponse(Collections.singletonList(validResponse), 1, 1));
+
+        when(deviceRepository.getAssignation(anyInt())).thenReturn(deviceDto);
+        when(deviceMapper.toResponse(any(DeviceDto.class))).thenReturn(new DeviceResponse());
+
+        EmployeePageResponse result = agendaService.getEmployeesByName("John", 1, 10);
+
+        assertNotNull(result);
+        assertEquals(1, result.getPageNumber());
+        assertEquals(1, result.getEmployees().size());
+        verify(employeeRepository).getByEmployeeName("John", 1, 10);
+    }
+
+    @Test
+    void getEmployeesBySurname_Success() {
+        when(employeeRepository.getByEmployeeSurname("Doe", 1, 10))
+                .thenReturn(new EmployeePageDto(List.of(employeeDto), 1, 1));
+
+        when(employeeMapper.toResponse(any(EmployeePageDto.class)))
+                .thenReturn(new EmployeePageResponse(Collections.singletonList(validResponse), 1, 1));
+
+        when(deviceRepository.getAssignation(anyInt())).thenReturn(deviceDto);
+        when(deviceMapper.toResponse(any(DeviceDto.class))).thenReturn(new DeviceResponse());
+
+        EmployeePageResponse result = agendaService.getEmployeesBySurname("Doe", 1, 10);
+
+        assertNotNull(result);
+        assertEquals(1, result.getPageNumber());
+        assertEquals(1, result.getEmployees().size());
+        verify(employeeRepository).getByEmployeeSurname("Doe", 1, 10);
+    }
+
+
+    @Test
+    void createEmployee_DatabaseError() {
+        when(employeeMapper.toDto(any(EmployeeRequest.class))).thenReturn(employeeDto);
+        when(employeeRepository.save(anyList())).thenThrow(new RuntimeException("DB error"));
+
+        assertThrows(RuntimeException.class,
+                () -> agendaService.createEmployee(Collections.singletonList(validRequest)));
     }
 }

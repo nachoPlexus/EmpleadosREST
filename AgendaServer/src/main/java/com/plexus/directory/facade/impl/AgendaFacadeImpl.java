@@ -1,5 +1,6 @@
 package com.plexus.directory.facade.impl;
 
+import com.plexus.directory.domain.error.StatusException;
 import com.plexus.directory.domain.model.request.EmployeeRequest;
 import com.plexus.directory.domain.model.response.EmployeePageResponse;
 import com.plexus.directory.domain.model.response.EmployeeResponse;
@@ -8,13 +9,20 @@ import com.plexus.directory.service.impl.AgendaServiceAsync;
 import com.plexus.directory.service.impl.AgendaServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springframework.web.servlet.View;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
@@ -23,12 +31,14 @@ import java.util.List;
 public class AgendaFacadeImpl implements AgendaFacade {
     private final AgendaServiceImpl service;
     private final AgendaServiceAsync asyncService;
+    private final Validator validator;
     private final View error;
 
     @Autowired
-    public AgendaFacadeImpl(AgendaServiceImpl service, AgendaServiceAsync asyncService, View error) {
+    public AgendaFacadeImpl(AgendaServiceImpl service, AgendaServiceAsync asyncService, Validator validator, View error) {
         this.service = service;
         this.asyncService = asyncService;
+        this.validator = validator;
         this.error = error;
     }
 
@@ -58,15 +68,58 @@ public class AgendaFacadeImpl implements AgendaFacade {
 
     @Override
     public ResponseEntity<String> createEmployees(List<EmployeeRequest> employeeRequests) {
-        String result = service.createEmployee(employeeRequests);
-        return result.equals("ok") ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los epmloyees creados con sus respectivos devices")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
+        ValidationEmployeesResult validationEmployeesResult = validateEmployeesList(employeeRequests);
+        String result = service.createEmployee(validationEmployeesResult.validEmployees());
+
+        return result.equals("ok")
+                ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los empleados creados correctamente")
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
     }
 
     @Override
     public ResponseEntity<String> updateEmployee(List<EmployeeRequest> employeeRequests) {
-        String result = service.createEmployee(employeeRequests);
-        return result.equals("ok") ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los epmloyees actualizados con sus respectivos devices")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
+        ValidationEmployeesResult validationEmployeesResult = validateEmployeesList(employeeRequests);
+        String result = service.updateEmployee(validationEmployeesResult.validEmployees());
+
+        return result.equals("ok")
+                ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los empleados actualizados correctamente")
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
     }
+
+    private ValidationEmployeesResult validateEmployeesList(List<EmployeeRequest> employeeRequests) {
+        List<EmployeeRequest> validEmployees = new ArrayList<>();
+        Map<String, Object> errors = new HashMap<>();
+
+        for (EmployeeRequest request : employeeRequests) {
+            Errors validationErrors = new BeanPropertyBindingResult(request, "employeeRequest");
+            validator.validate(request, validationErrors);
+
+            if (request.getAssignedDevice() != null) {
+                Errors deviceErrors = new BeanPropertyBindingResult(request.getAssignedDevice(), "deviceRequest");
+                validator.validate(request.getAssignedDevice(), deviceErrors);
+
+                if (deviceErrors.hasErrors()) {
+                    errors.put("Error en el dispositivo asignado al empleado con ID " + request.getId(),
+                            deviceErrors.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+                }
+            }
+
+            if (validationErrors.hasErrors()) {
+                errors.put("Error en el empleado con ID " + request.getId(),
+                        validationErrors.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+            } else {
+                validEmployees.add(request);
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new StatusException(Map.of(
+                    "Message", "Se han invalidado " + errors.size() + " de " + employeeRequests.size() + " empleados y/o dispositivos.",
+                    "Errores", errors));
+        }
+
+        return new ValidationEmployeesResult(validEmployees, errors);
+    }
+
+    private record ValidationEmployeesResult(List<EmployeeRequest> validEmployees, Map<String, Object> errors) { }
 }

@@ -1,11 +1,6 @@
 package com.plexus.directory.service.impl;
 
-import com.plexus.directory.domain.model.DeviceDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class AgendaServiceAsync {

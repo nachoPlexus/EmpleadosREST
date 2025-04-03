@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeviceFacadeImplTest {
+    //todo hacer test para acciones masivas
 
     @Mock
     private DeviceServiceImpl deviceService;

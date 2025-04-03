@@ -1,0 +1,592 @@
+{
+	"info": {
+		"_postman_id": "2f755d93-97d0-4ad9-baf8-ca0da31a4e69",
+		"name": "Peoples",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31109183"
+	},
+	"item": [
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>ID</th>\r",
+									"        <th>Name</th>\r",
+									"        <th>Surname</th>\r",
+									"        <th>MailPlexus</th>\r",
+									"        <th>MailClient</th>\r",
+									"        <th>Client ID</th>\r",
+									"        <th>Phone Number</th>\r",
+									"        <th>Phone Serial Number</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.employees}}\r",
+									"        <tr>\r",
+									"            <td>{{id}}</td>\r",
+									"            <td>{{name}}</td>\r",
+									"            <td>{{surname}}</td>\r",
+									"            <td>{{mailPlexus}}</td>\r",
+									"            <td>{{mailClient}}</td>\r",
+									"            <td>{{clientId}}</td>\r",
+									"            <td>{{phoneNumber}}</td>\r",
+									"            <td>{{phoneSerialNumber}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{EMPLOYEE_URL}}/2/17",
+							"host": [
+								"{{EMPLOYEE_URL}}"
+							],
+							"path": [
+								"2",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{EMPLOYEE_URL}}/id/21",
+							"host": [
+								"{{EMPLOYEE_URL}}"
+							],
+							"path": [
+								"id",
+								"21"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByName",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{EMPLOYEE_URL}}/name/r/1/2",
+							"host": [
+								"{{EMPLOYEE_URL}}"
+							],
+							"path": [
+								"name",
+								"r",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{EMPLOYEE_URL}}/999\n",
+							"host": [
+								"{{EMPLOYEE_URL}}"
+							],
+							"path": [
+								"999\n"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 3,\r\n    \"name\": \"\",\r\n    \"surname\": \"ApellidoMuyLargoQueSuperaElLimiteDeCaracteresPermitidosEnElSistemaDeValidacionParaDemostrarElError\",\r\n    \"mailPlexus\": \"correo-invalido\",\r\n    \"mailClient\": \"tambien-malo\",\r\n    \"clientId\": \"ID_QUE_SUPERA_EL_LIMITE_DE_50_CARACTERES_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\",\r\n    \"phoneNumber\": \"12345\",\r\n    \"phoneSerialNumber\": null\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{EMPLOYEE_URL}}",
+							"host": [
+								"{{EMPLOYEE_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Mariano\",\r\n    \"surname\": \"Rajoy\",\r\n    \"mailPlexus\": \"mariano@plexus.com\",\r\n    \"mailClient\": \"marianorajoy@externo.com\",\r\n    \"clientId\": 123456678,\r\n    \"phoneNumber\": \"6666669,9\",\r\n    \"phoneSerialNumber\": \"E98765\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{EMPLOYEE_URL}}",
+							"host": [
+								"{{EMPLOYEE_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Devices",
+			"item": [
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>ID</th>\r",
+									"        <th>Serial Number</th>\r",
+									"        <th>Brand</th>\r",
+									"        <th>Model</th>\r",
+									"        <th>OS</th>\r",
+									"        <th>Assigned To</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.devices}}\r",
+									"        <tr id=row_{{@key}}>\r",
+									"            <td>{{id}}</td>\r",
+									"            <td>{{serialNumber}}</td>\r",
+									"            <td>{{brand}}</td>\r",
+									"            <td>{{model}}</td>\r",
+									"            <td>{{os}}</td>\r",
+									"            <td>{{assignedTo}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()};\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DEVICE_URL}}",
+							"host": [
+								"{{DEVICE_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DEVICE_URL}}/id/21",
+							"host": [
+								"{{DEVICE_URL}}"
+							],
+							"path": [
+								"id",
+								"21"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByBrand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DEVICE_URL}}/brand/a?page=1&size=200",
+							"host": [
+								"{{DEVICE_URL}}"
+							],
+							"path": [
+								"brand",
+								"a"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "200"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteMany",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n        {\r\n            \"id\": 17,\r\n            \"serialNumber\": \"RF8R10KGN1a\",\r\n            \"brand\": \"Xiaomih\",\r\n            \"model\": \"a3\",\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": null\r\n        },\r\n        {\r\n            \"id\": 18,\r\n            \"serialNumber\": \"RF8R10KGNBa\",\r\n            \"brand\": \"Samsungh\",\r\n            \"model\": \"a3\",\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": null\r\n        },\r\n        {\r\n            \"id\": 19,\r\n            \"serialNumber\": \"RF8R108UF6a\",\r\n            \"brand\": \"Samsungh\",\r\n            \"model\": \"a3\",\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": null\r\n        }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DEVICE_URL}}",
+							"host": [
+								"{{DEVICE_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Many",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[     \r\n        \r\n        {\r\n            \"id\": 2,\r\n            \"serialNumber\": \"RF8R10KGN8D\",\r\n            \"brand\": \"Samsung\",\r\n            \"model\": null,\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": 1\r\n        },\r\n        {\r\n            \"id\": 3,\r\n            \"serialNumber\": \"RF8R10KGN9D\",\r\n            \"brand\": \"Samsung\",\r\n            \"model\": null,\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": 4\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"serialNumber\": \"AB8R10KGN7D\",\r\n            \"brand\": \"Xiaomi\",\r\n            \"model\": null,\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": 5\r\n        },\r\n        {\r\n            \"id\": 5,\r\n            \"serialNumber\": \"AC8R10KGN7D\",\r\n            \"brand\": \"Samsung\",\r\n            \"model\": null,\r\n            \"os\": \"Android\",\r\n            \"assignedTo\": 6\r\n        }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DEVICE_URL}}",
+							"host": [
+								"{{DEVICE_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save Many",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"    .error-item {\r",
+									"        margin: 5px 0;\r",
+									"        padding: 5px;\r",
+									"        background-color: #fff0f0;\r",
+									"        border-left: 3px solid #ff6b6b;\r",
+									"    }\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Message</th>\r",
+									"        <th>Errores</th>\r",
+									"        <th>Additional Info</th>\r",
+									"        <th>Status</th>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>{{response.Message}}</td>\r",
+									"        <td>\r",
+									"            {{#each response.Errores}}\r",
+									"                {{#each (splitErrors this)}}\r",
+									"                    <div class=\"error-item\">{{this}}</div>\r",
+									"                {{/each}}\r",
+									"            {{/each}}\r",
+									"        </td>\r",
+									"        <td>{{response.message}}</td>\r",
+									"        <td>{{response.status}}</td>\r",
+									"    </tr>\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function splitErrors(errorString) {\r",
+									"    return errorString.split(/(?<=]), /);\r",
+									"}\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    console.log(\"Response data:\", response);\r",
+									"\r",
+									"    return {\r",
+									"        response: response,\r",
+									"        helpers: {\r",
+									"            splitErrors: splitErrors\r",
+									"        }\r",
+									"    };\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"id\": 234,\r\n        \"serialNumber\": \"A1A1A1A1A11\",\r\n        \"brand\": \"XIAOMI\",\r\n        \"model\": \"a3\",\r\n        \"os\": \"Android\"\r\n    }\r\n]\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DEVICE_URL}}",
+							"host": [
+								"{{DEVICE_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Agenda",
+			"item": [
+				{
+					"name": "filter",
+					"item": [
+						{
+							"name": "FilterID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8082/agenda/employees/filter/1?filterType=id&page=1&size=2",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8082",
+									"path": [
+										"agenda",
+										"employees",
+										"filter",
+										"1"
+									],
+									"query": [
+										{
+											"key": "filterType",
+											"value": "id"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FilterSurname",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8082/agenda/employees/filter/a?filterType=surname&page=1&size=2",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8082",
+									"path": [
+										"agenda",
+										"employees",
+										"filter",
+										"a"
+									],
+									"query": [
+										{
+											"key": "filterType",
+											"value": "surname"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FilterName",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8082/agenda/employees/filter/Nacho?filterType=name&page=1&size=2",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8082",
+									"path": [
+										"agenda",
+										"employees",
+										"filter",
+										"Nacho"
+									],
+									"query": [
+										{
+											"key": "filterType",
+											"value": "name"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Getall",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8082/agenda/employees/1/11",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8082",
+							"path": [
+								"agenda",
+								"employees",
+								"1",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

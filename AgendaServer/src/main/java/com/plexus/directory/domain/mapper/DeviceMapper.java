@@ -8,10 +8,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface DeviceMapper {
-
-    //TODO DE REQUIEST A DTO, DE DTO A RESPONSE
-
-//    @Mapping(target = "id", source = "id")
     DeviceDto toDto(DeviceRequest request);
     @Mapping(target = "deviceId", source = "id")
     @Mapping(target = "serialNumber", source = "serialNumber")
