@@ -25,11 +25,11 @@ public interface EmployeesApi {
             @Query("size") int size
     );
 
-    @GET("employees/surname/{employeeSurname}")
+    @GET("employees/surname/{employeeSurname}/{page}/{size}")
     Call<EmployeePageDto> getEmployeesBySurname(
             @Path("employeeSurname") String employeeName,
-            @Query("page") int page,
-            @Query("size") int size
+            @Path("page") int page,
+            @Path("size") int size
     );
 
     @POST("employees")

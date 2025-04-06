@@ -22,9 +22,9 @@ public class AgendaController {
     public ResponseEntity<EmployeePageResponse> getEmployees(
             @PathVariable(required = false) Integer page,
             @PathVariable(required = false) Integer size) {
-        //los page y size por defecto
-        int resolvedPage = (page != null) ? page - 1 : 1;
-        int resolvedSize = (size != null) ? size : 10;
+        //los page y size por defecto, les resta uno en servidor para "humanizar", por eso 2/11 y no 1/10
+        int resolvedPage = (page != null) ? page : 2;
+        int resolvedSize = (size != null) ? size : 11;
 
         return facade.getEmployeesPaged(resolvedPage, resolvedSize);
     }
@@ -32,9 +32,9 @@ public class AgendaController {
     @GetMapping("/filter/{filterValue}")
     public ResponseEntity<EmployeePageResponse> getFilteredEmployees(
             @PathVariable String filterValue,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "10") String filterType) {
+            @RequestParam(defaultValue = "2") int page,
+            @RequestParam(defaultValue = "11") int size,
+            @RequestParam String filterType) {
         return switch (filterType) {
             case "name" -> facade.getEmployeesByName(filterValue, page, size);
             case "surname" -> facade.getEmployeesBySurname(filterValue, page, size);

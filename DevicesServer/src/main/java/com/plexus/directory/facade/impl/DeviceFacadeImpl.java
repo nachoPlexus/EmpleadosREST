@@ -51,13 +51,11 @@ public class DeviceFacadeImpl implements DeviceFacade {
     }
 
     private static List<Device> wipeAllExceptIds(List<DeviceDto> devicesDto) {
-        return devicesDto.stream()
-                .map(dto -> {
-                    Device device = new Device();
-                    device.setId(dto.getId());
-                    return device;
-                })
-                .toList();
+        return devicesDto.stream().map(dto -> {
+            Device device = new Device();
+            device.setId(dto.getId());
+            return device;
+        }).toList();
     }
 
     @Override
@@ -76,7 +74,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
             log.error("error al contar los devices: ", e);
             totalEntities = deviceDtos.size();
         }
-        DevicePageResponse response = new DevicePageResponse(deviceDtos, totalEntities, page + 1);
+        DevicePageResponse response = new DevicePageResponse(deviceDtos, totalEntities, page<=1?1:page+1);
         return ResponseEntity.ok(response);
     }
 
@@ -84,7 +82,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
     public ResponseEntity<DeviceDto> getDeviceById(int deviceId) {
         return ResponseEntity.ok(mapper.toDto(service.getById(deviceId)));
     }
-    
+
 
     @Override
     public ResponseEntity<DeviceDto> getByAssignatedEmployee(int employeeId) {
@@ -94,10 +92,9 @@ public class DeviceFacadeImpl implements DeviceFacade {
     @Override
     public ResponseEntity<DevicePageResponse> getDevicesByBrand(String brand, int resolvedPage, int resolvedSize) {
 
-        List<DeviceDto> devices = service.getByBrand(brand, resolvedPage, resolvedSize)
-                .stream().map(mapper::toDto).toList();
+        List<DeviceDto> devices = service.getByBrand(brand, resolvedPage, resolvedSize).stream().map(mapper::toDto).toList();
 
-        return ResponseEntity.ok(new DevicePageResponse(devices, devices.size(), 1));
+        return ResponseEntity.ok(new DevicePageResponse(devices, devices.size(), resolvedPage <= 1 ? 1 : resolvedPage + 1));
     }
 
     @Override
@@ -105,9 +102,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
         Result validationResult = validateDevicesList(devicesDto);
         int result = service.save(validationResult.validDevices);
 
-        return result == validationResult.validDevices().size()
-                ? ResponseEntity.status(HttpStatus.CREATED).body("Devices creados bien")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INVISIBLE);
+        return result == validationResult.validDevices().size() ? ResponseEntity.status(HttpStatus.CREATED).body("Devices creados bien") : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INVISIBLE);
     }
 
     @Override
@@ -115,9 +110,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
         Result validationResult = validateDevicesList(devicesDto);
         int result = service.update(validationResult.validDevices);
 
-        return result == validationResult.validDevices.size()
-                ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los devices actualizados bien")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INVISIBLE);
+        return result == validationResult.validDevices.size() ? ResponseEntity.status(HttpStatus.CREATED).body("Todos los devices actualizados bien") : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(INVISIBLE);
 
     }
 
@@ -126,9 +119,7 @@ public class DeviceFacadeImpl implements DeviceFacade {
         List<Device> devices = wipeAllExceptIds(devicesDto);
 
         int result = service.delete(devices);
-        return result == devices.size()
-                ? ResponseEntity.status(HttpStatus.OK).body("Devices borrados bien")
-                : ResponseEntity.status(HttpStatus.MULTI_STATUS).body(ERROR_A_MEDIAS_DELETE_DEVICE);
+        return result == devices.size() ? ResponseEntity.status(HttpStatus.OK).body("Devices borrados bien") : ResponseEntity.status(HttpStatus.MULTI_STATUS).body(ERROR_A_MEDIAS_DELETE_DEVICE);
     }
 
     private Result validateDevicesList(List<DeviceDto> devicesDto) throws StatusException {
@@ -139,23 +130,18 @@ public class DeviceFacadeImpl implements DeviceFacade {
             Errors tempErrors = new BeanPropertyBindingResult(dto, "deviceDto");
             validator.validate(dto, tempErrors);
             if (tempErrors.hasErrors()) {
-                errors.put("Error en el dispositivo con serial " + dto.getSerialNumber() + ": ", tempErrors.getAllErrors().stream().map(e-> e.getDefaultMessage()));
+                errors.put("Error en el dispositivo con serial " + dto.getSerialNumber() + ": ", tempErrors.getAllErrors().stream().map(e -> e.getDefaultMessage()));
             } else {
                 validDevices.add(mapper.toEntity(dto));
             }
         }
 
         if (!errors.isEmpty()) {
-            throw new StatusException(
-                    Map.of("Message", "Se han invalidado " + errors.size() + " de " + devicesDto.size() + " devices. Se muestran los errores de los devices que no han sido actualizados porque son invalidos: ",
-                            "Errores", errors));
+            throw new StatusException(Map.of("Message", "Se han invalidado " + errors.size() + " de " + devicesDto.size() + " devices. Se muestran los errores de los devices que no han sido actualizados porque son invalidos: ", "Errores", errors));
         }
 
         return new Result(validDevices, errors);
     }
 
-    private record Result(List<Device> validDevices, Map
-            <String,
-                    java.lang.Object> errors) {
-    }
+    private record Result(List<Device> validDevices, Map<String, java.lang.Object> errors){}
 }

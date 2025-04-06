@@ -46,7 +46,7 @@ public class EmployeeController {
         return facade.getEmployeesByName(employeeName,resolvedPage,resolvedSize);
     }
 
-    @GetMapping({"/surname/{surnameValue}"})
+    @GetMapping({"/surname/{surnameValue}/{page}/{size}"})
     public ResponseEntity<EmployeePageResponse> getEmployeesBySurname(
             @PathVariable String surnameValue,
             @PathVariable(required = false) Integer page,

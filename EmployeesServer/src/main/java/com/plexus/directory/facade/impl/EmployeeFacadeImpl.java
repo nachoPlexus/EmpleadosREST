@@ -6,6 +6,7 @@ import com.plexus.directory.domain.dto.EmployeePageResponse;
 import com.plexus.directory.domain.mapper.EmployeeMapper;
 import com.plexus.directory.facade.EmployeeFacade;
 import com.plexus.directory.service.impl.EmployeeServiceImpl;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -26,11 +28,13 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
 
     private final EmployeeServiceImpl service;
     private final EmployeeMapper mapper;
+    private final RestClient.Builder builder;
 
 
-    public EmployeeFacadeImpl(EmployeeServiceImpl service, EmployeeMapper mapper) {
+    public EmployeeFacadeImpl(EmployeeServiceImpl service, EmployeeMapper mapper, RestClient.Builder builder) {
         this.service = service;
         this.mapper = mapper;
+        this.builder = builder;
     }
 
     @Override
@@ -48,7 +52,7 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
             totalEntities = employees.size();
         }
 
-        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, totalEntities, page+1);
+        EmployeePageResponse response = new EmployeePageResponse(employeeDtos, totalEntities, page<=1?1:page+1);
         return ResponseEntity.ok(response);
     }
     @Async
@@ -68,7 +72,7 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
         List<EmployeeDto> employees = service.getByName(employeeName,page,size)
                 .stream().map(mapper::toDto).toList();
 
-        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page));
+        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page<=1?1:page<=1?1:page+1));
     }
 
 
@@ -78,7 +82,7 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
         List<EmployeeDto> employees = service.getBySurname(surnameValue,page,size)
                 .stream().map(mapper::toDto).toList();
 
-        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page));
+        return ResponseEntity.ok(new EmployeePageResponse(employees, employees.size(), page<=1?1:page<=1?1:page+1));
     }
 
     @Override
