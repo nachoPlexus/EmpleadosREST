@@ -15,6 +15,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
 
+    @Mapping(target = "id",source = "id")
+    @Mapping(target = "name",source = "name")
+    @Mapping(target = "surname",source = "surname")
+    @Mapping(target = "mailPlexus",source = "plexusMail")
+    @Mapping(target = "mailClient",source = "clientMail")
+    @Mapping(target = "phoneNumber",source = "phoneNumber")
     EmployeeDto toDto(EmployeeRequest request);
 
     @Mapping(target = "employeeId",source = "id")

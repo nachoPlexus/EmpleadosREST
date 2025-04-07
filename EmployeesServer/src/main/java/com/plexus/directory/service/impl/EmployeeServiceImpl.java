@@ -3,7 +3,6 @@ package com.plexus.directory.service.impl;
 import com.plexus.directory.dao.EmployeeRepository;
 import com.plexus.directory.domain.Employee;
 import com.plexus.directory.service.EmployeeService;
-import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -40,12 +39,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return dao.getBySurname(surnameValue,page,size);
     }
 
-    @Transactional
     public int save(Employee employee) {
         return dao.save(employee);
     }
 
-    @Transactional
     public int update(Employee employee) {
         return dao.update(employee);
     }

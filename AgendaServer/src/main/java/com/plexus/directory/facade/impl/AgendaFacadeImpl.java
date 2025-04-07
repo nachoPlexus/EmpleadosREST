@@ -99,13 +99,13 @@ public class AgendaFacadeImpl implements AgendaFacade {
                 validator.validate(request.getAssignedDevice(), deviceErrors);
 
                 if (deviceErrors.hasErrors()) {
-                    errors.put("Error en el dispositivo asignado al empleado con ID " + request.getId(),
+                    errors.put("Error en el dispositivo asignado al empleado llamado " + request.getName()+" "+request.getSurname(),
                             deviceErrors.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
                 }
             }
 
             if (validationErrors.hasErrors()) {
-                errors.put("Error en el empleado con ID " + request.getId(),
+                errors.put("Error en el empleado con nombre " + request.getName(),
                         validationErrors.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
             } else {
                 validEmployees.add(request);

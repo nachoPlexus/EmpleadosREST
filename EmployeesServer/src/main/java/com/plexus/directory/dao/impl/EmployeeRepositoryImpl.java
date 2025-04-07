@@ -115,7 +115,8 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
     @Override
     public int save(Employee employee) {
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
-             PreparedStatement stmt = conn.prepareStatement(INSERT_EMPLOYEE, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(INSERT_EMPLOYEE,
+                     Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, employee.getName());
             stmt.setString(2, employee.getSurname());
@@ -130,7 +131,7 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             if (affectedRows == 0) {
                 throw new DataBaseException("errror al guardar employees, no rows afectadas.");
             }
-            return 1;
+            return  stmt.getGeneratedKeys().getInt(1);
         } catch (SQLException e) {
             throw new DataBaseException("error de base de datos: \n" + e.getMessage());
         }

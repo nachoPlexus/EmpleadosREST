@@ -2,6 +2,7 @@ package com.plexus.directory.service.impl;
 
 import com.plexus.directory.dao.DeviceRepository;
 import com.plexus.directory.dao.EmployeeRepository;
+import com.plexus.directory.domain.error.DataBaseException;
 import com.plexus.directory.domain.error.StatusException;
 import com.plexus.directory.domain.mapper.DeviceMapper;
 import com.plexus.directory.domain.mapper.EmployeeMapper;
@@ -64,18 +65,34 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     @Override
-    @Transactional
     public String createEmployee(List<EmployeeRequest> employeeRequests) {
-        List<EmployeeDto> employeesToADD =new ArrayList<>();
+        if (employeeRequests == null || employeeRequests.isEmpty()) {
+            throw new IllegalArgumentException("La lista de empleados no puede estar vacía");
+        }
+
+        List<EmployeeDto> employeesToAdd = employeeRequests.stream()
+                .map(employeeMapper::toDto)
+                .toList();
+
+        List<Integer> employeeIds = employeeRepository.save(employeesToAdd);
+        if (employeeIds.size() != employeesToAdd.size()) {
+            throw new DataBaseException("Error al guardar empleados: no se devolvió el ID para todos los registros");
+        }
+
         List<DeviceDto> devicesToAdd = new ArrayList<>();
-        employeeRequests.forEach(em->{
-            employeesToADD.add(employeeMapper.toDto(em));
-            if (em.getAssignedDevice()!=null){
-                devicesToAdd.add(0,deviceMapper.toDto(em.getAssignedDevice()));
+        List<EmployeeDevicePair> assignments = new ArrayList<>();
+
+        for (int i = 0; i < employeeRequests.size(); i++) {
+            EmployeeRequest request = employeeRequests.get(i);
+            if (request.getAssignedDevice() != null) {
+                DeviceDto deviceDto = deviceMapper.toDto(request.getAssignedDevice());
+                deviceDto.setAssignedTo(employeeIds.get(i));
+                devicesToAdd.add(deviceDto);
+                assignments.add(new EmployeeDevicePair(employeeIds.get(i), deviceDto));
             }
-        });
-        employeeRepository.save(employeesToADD);
+        }
         deviceRepository.save(devicesToAdd);
+
         return "ok";
     }
 
@@ -112,4 +129,5 @@ public class AgendaServiceImpl implements AgendaService {
             return "ok";
         return "mal";
     }
+    private record EmployeeDevicePair(Integer employeeId, DeviceDto device) {}
 }

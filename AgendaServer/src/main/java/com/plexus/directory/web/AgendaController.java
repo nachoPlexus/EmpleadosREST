@@ -18,7 +18,7 @@ public class AgendaController {
         this.facade = facade;
     }
 
-    @GetMapping({"/{page}/{size}", "/"})
+    @GetMapping({"/{page}/{size}", "/", ""})
     public ResponseEntity<EmployeePageResponse> getEmployees(
             @PathVariable(required = false) Integer page,
             @PathVariable(required = false) Integer size) {

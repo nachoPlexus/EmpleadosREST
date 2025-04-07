@@ -8,7 +8,9 @@ import com.plexus.directory.domain.model.EmployeeDto;
 import com.plexus.directory.domain.model.EmployeePageDto;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
 
     @Override
     public EmployeePageDto getAll(int page, int size) {
-        return safeApiCall(api.getEmployees(page,size));
+        return safeApiCall(api.getEmployees(page, size));
     }
 
     @Override
@@ -43,41 +45,66 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
     }
 
     @Override
-    public int save(List<EmployeeDto> employees) {
-        int sizesaved = 0;
-        for (EmployeeDto e:employees){
-            String result = safeApiCall(api.createEmployee(e));
-            if (result.equalsIgnoreCase("Employee creado bien"))
-                sizesaved++;
+    public List<Integer> save(List<EmployeeDto> employees) {
+        List<Integer> ids = new ArrayList<>();
+        List<Map<String, Object>> errors = new ArrayList<>();
+        int totalEmployees = employees.size();
+
+        for (EmployeeDto e : employees) {
+            try {
+                String result = safeApiCall(api.createEmployee(e));
+                ids.add(extractIdFromResponse(result));
+            } catch (StatusException | NumberFormatException ex) {
+                errors.add(Map.of("employee", e,
+                        "error", ex.getMessage(),
+                        "type", ex.getClass().getSimpleName()
+                ));
+            }
         }
-        if (sizesaved!=employees.size())
-            throw new StatusException(Map.of("SavingError","Se han guardado menos employees que los enviados"));
-        return 1;
+        if (!errors.isEmpty()) {
+            throw new StatusException(Map.of("SavingError", "Error al guardar empleados, haciendo rollback",
+                    "successful", ids.size(),
+                    "failed", totalEmployees - ids.size(),
+                    "errors", errors
+            ));
+        }
+        return ids;
+    }
+
+    private int extractIdFromResponse(String response) throws NumberFormatException, StatusException{
+        String prefix = "Employee creado bien con id: ";
+        if (!response.contains(prefix)) {
+            throw new StatusException(Map.of(
+                    "InvalidResponse", "Formato de respuesta no esperado",
+                    "response", response
+            ));
+        }
+        return Integer.parseInt(response.substring(response.length() - 1));
     }
 
     @Override
     public int update(List<EmployeeDto> employees) {
         int sizeUpdated = 0;
-        for (EmployeeDto e:employees){
+        for (EmployeeDto e : employees) {
             String result = safeApiCall(api.updateEmployee(e));
             if (result.equalsIgnoreCase("Employee actualizado bien"))
                 sizeUpdated++;
         }
-        if (sizeUpdated!= employees.size())
-            throw new StatusException(Map.of("UpdatingError","Se han actualizado menos employees que los enviados"));
+        if (sizeUpdated != employees.size())
+            throw new StatusException(Map.of("UpdatingError", "Se han actualizado menos employees que los enviados"));
         return 1;
     }
 
     @Override
-    public int delete(List<EmployeeDto> employees){
+    public int delete(List<EmployeeDto> employees) {
         int sizeUpdated = 0;
-        for (EmployeeDto e:employees){
+        for (EmployeeDto e : employees) {
             String result = safeApiCall(api.deleteEmployee(e.getId()));
             if (result.equalsIgnoreCase("Employee actualizado bien"))
                 sizeUpdated++;
         }
-        if (sizeUpdated!= employees.size())
-            throw new StatusException(Map.of("UpdatingError","Se han actualizado menos employees que los enviados"));
+        if (sizeUpdated != employees.size())
+            throw new StatusException(Map.of("UpdatingError", "Se han actualizado menos employees que los enviados"));
         return 1;
 
     }

@@ -18,7 +18,7 @@ public interface EmployeeRepository {
 
     EmployeeDto getEmployeeById(int id);
 
-    int save(List<EmployeeDto> devices);
+    List<Integer> save(List<EmployeeDto> devices);
 
     int update(List<EmployeeDto> devices);
 

@@ -88,7 +88,7 @@ public class EmployeeFacadeImpl implements EmployeeFacade {
     @Override
     public ResponseEntity<String> createEmployee(EmployeeDto employeeDTO) {
         int result = service.save(mapper.toEntity(employeeDTO));
-        return result > 0 ? ResponseEntity.status(HttpStatus.CREATED).body("Employee creado bien")
+        return result > 0 ? ResponseEntity.status(HttpStatus.CREATED).body("Employee creado bien con id: "+result)
                 : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error inesperado");
     }
 
