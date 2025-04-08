@@ -6,14 +6,18 @@ import com.plexus.directory.dao.retrofit.llamadas.EmployeesApi;
 import com.plexus.directory.domain.error.StatusException;
 import com.plexus.directory.domain.model.EmployeeDto;
 import com.plexus.directory.domain.model.EmployeePageDto;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.ResponseBody;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 @Profile("versionBase")
 public class EmployeeRepositoryImpl extends GenericRepository implements EmployeeRepository {
@@ -26,22 +30,22 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
 
     @Override
     public EmployeePageDto getAll(int page, int size) {
-        return safeApiCall(api.getEmployees(page, size));
+        return safeApiCall(api.getEmployees(page, size),EmployeePageDto.class);
     }
 
     @Override
     public EmployeePageDto getByEmployeeName(String employeeName, int page, int size) {
-        return safeApiCall(api.getEmployeesByName(employeeName, page, size));
+        return safeApiCall(api.getEmployeesByName(employeeName, page, size),EmployeePageDto.class);
     }
 
     @Override
     public EmployeePageDto getByEmployeeSurname(String employeeSurname, int page, int size) {
-        return safeApiCall(api.getEmployeesBySurname(employeeSurname, page, size));
+        return safeApiCall(api.getEmployeesBySurname(employeeSurname, page, size),EmployeePageDto.class);
     }
 
     @Override
     public EmployeeDto getEmployeeById(int id) {
-        return safeApiCall(api.getEmployeeById(id));
+        return safeApiCall(api.getEmployeeById(id),EmployeeDto.class);
     }
 
     @Override
@@ -52,12 +56,11 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
 
         for (EmployeeDto e : employees) {
             try {
-                String result = safeApiCall(api.createEmployee(e));
+                String result = safeApiCall(api.createEmployee(e), ResponseBody.class).string();
                 ids.add(extractIdFromResponse(result));
-            } catch (StatusException | NumberFormatException ex) {
-                errors.add(Map.of("employee", e,
-                        "error", ex.getMessage(),
-                        "type", ex.getClass().getSimpleName()
+            } catch (StatusException | NumberFormatException | IOException ex) {
+                errors.add(Map.of("employee", e!=null?e:"empleado nulo",
+                        "error", ex
                 ));
             }
         }
@@ -71,22 +74,31 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
         return ids;
     }
 
-    private int extractIdFromResponse(String response) throws NumberFormatException, StatusException{
+    private int extractIdFromResponse(String response) throws NumberFormatException, StatusException {
         String prefix = "Employee creado bien con id: ";
-        if (!response.contains(prefix)) {
+        if (!response.startsWith(prefix)) {
             throw new StatusException(Map.of(
                     "InvalidResponse", "Formato de respuesta no esperado",
                     "response", response
             ));
         }
-        return Integer.parseInt(response.substring(response.length() - 1));
+
+        try {
+            return Integer.parseInt(response.substring(prefix.length()).trim());
+        } catch (NumberFormatException e) {
+            throw new StatusException(Map.of(
+                    "InvalidResponse", "No se pudo extraer el ID del empleado",
+                    "response", response
+            ));
+        }
     }
+
 
     @Override
     public int update(List<EmployeeDto> employees) {
         int sizeUpdated = 0;
         for (EmployeeDto e : employees) {
-            String result = safeApiCall(api.updateEmployee(e));
+            String result = safeApiCall(api.updateEmployee(e),String.class);
             if (result.equalsIgnoreCase("Employee actualizado bien"))
                 sizeUpdated++;
         }
@@ -99,7 +111,7 @@ public class EmployeeRepositoryImpl extends GenericRepository implements Employe
     public int delete(List<EmployeeDto> employees) {
         int sizeUpdated = 0;
         for (EmployeeDto e : employees) {
-            String result = safeApiCall(api.deleteEmployee(e.getId()));
+            String result = safeApiCall(api.deleteEmployee(e.getId()),String.class);
             if (result.equalsIgnoreCase("Employee actualizado bien"))
                 sizeUpdated++;
         }

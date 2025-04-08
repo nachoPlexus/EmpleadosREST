@@ -2,6 +2,7 @@ package com.plexus.directory.dao.retrofit.llamadas;
 
 import com.plexus.directory.domain.model.EmployeeDto;
 import com.plexus.directory.domain.model.EmployeePageDto;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -33,9 +34,8 @@ public interface EmployeesApi {
     );
 
     @POST("employees")
-    Call<String> createEmployee(
-            @Body EmployeeDto employee
-    );
+    Call<ResponseBody> createEmployee(@Body EmployeeDto employee);
+
 
     @PUT("employees")
     Call<String> updateEmployee(

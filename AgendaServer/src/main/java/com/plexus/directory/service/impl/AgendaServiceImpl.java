@@ -65,6 +65,7 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     @Override
+    @Transactional
     public String createEmployee(List<EmployeeRequest> employeeRequests) {
         if (employeeRequests == null || employeeRequests.isEmpty()) {
             throw new IllegalArgumentException("La lista de empleados no puede estar vacía");

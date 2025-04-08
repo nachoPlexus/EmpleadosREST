@@ -4,6 +4,7 @@ public class SqlConstants {
 
     public static final String COUNTALL_EMPLOYEES = "SELECT COUNT(*) FROM employees";
     public static final String SELECT_FORM_EMLOYEES = "SELECT * FROM employees LIMIT ? OFFSET ?;";
+    public static final String SELECT_LAST_ID= "SELECT employees.id from employees where mail_plexus = ?;";
     public static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employees WHERE id = ?";
     public static final String GET_EMPLOYEE_BY_NAME = "SELECT * FROM employees WHERE name LIKE ? LIMIT ? OFFSET ?";
     public static final String GET_EMPLOYEE_BY_SURNAME = "SELECT * FROM employees WHERE surname LIKE ? LIMIT ? OFFSET ?";

@@ -115,8 +115,7 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
     @Override
     public int save(Employee employee) {
         try (Connection conn = DriverManager.getConnection(Constants.DBURL);
-             PreparedStatement stmt = conn.prepareStatement(INSERT_EMPLOYEE,
-                     Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(INSERT_EMPLOYEE)) {
 
             stmt.setString(1, employee.getName());
             stmt.setString(2, employee.getSurname());
@@ -125,17 +124,27 @@ public class EmployeeRepositoryImpl implements com.plexus.directory.dao.Employee
             stmt.setString(5, employee.getClientId());
             stmt.setString(6, employee.getPhoneNumber());
             stmt.setString(7, employee.getPhoneSerialNumber());
-
-
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataBaseException("errror al guardar employees, no rows afectadas.");
+                throw new DataBaseException("Error al guardar employees, no rows afectadas.");
             }
-            return  stmt.getGeneratedKeys().getInt(1);
+
+            try (PreparedStatement idStmt = conn.prepareStatement(SELECT_LAST_ID)) {
+                idStmt.setString(1, employee.getMailPlexus());
+                try (ResultSet rs = idStmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    } else {
+                        throw new DataBaseException("No se pudo obtener el ID generado.");
+                    }
+                }
+            }
         } catch (SQLException e) {
-            throw new DataBaseException("error de base de datos: \n" + e.getMessage());
+            throw new DataBaseException("Error de base de datos: \n" + e.getMessage());
         }
     }
+
+
 
 
     @Override

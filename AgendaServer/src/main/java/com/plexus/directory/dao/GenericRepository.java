@@ -15,12 +15,12 @@ import java.util.Map;
 @Repository
 @Profile("versionBase")
 public abstract class GenericRepository {
-    protected <T> T safeApiCall(Call<T> call) throws StatusException, DataBaseException, BadRequestException {
-        try { Response<T> response = call.execute();
+    protected <T> T safeApiCall(Call<T> call, Class<T> responseType) throws StatusException, DataBaseException, BadRequestException {
+        try {
+            Response<T> response = call.execute();
 
             if (!response.isSuccessful()) {
                 String errorBody = response.errorBody() != null ? response.errorBody().string() : "Error body vacío";
-
                 handleErrorResponse(response.code(), errorBody);
             }
 
@@ -34,6 +34,7 @@ public abstract class GenericRepository {
             throw new StatusException(Map.of("Error en la comunicación con la API", e.getMessage() != null ? e.getMessage() : "Sin mensaje de error"));
         }
     }
+
 
     private void handleErrorResponse(int statusCode, String errorBody) throws DataBaseException, BadRequestException, StatusException {
         switch (statusCode) {

@@ -1,5 +1,6 @@
 package com.plexus.directory.domain.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -8,11 +9,11 @@ import lombok.*;
 @Builder
 public class DeviceDto {
     private int id;
-    @NonNull
+    @NotNull(message = "El serialNumber no puede ser nulo")
     private String serialNumber;
     private String brand;
     private String model;
-    @NonNull
+    @NotNull(message = "El sistema operativo (os) no puede ser nulo")
     private String os;
     private int assignedTo;
 }

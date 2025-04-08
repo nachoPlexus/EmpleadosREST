@@ -1,6 +1,7 @@
 package com.plexus.directory.facade.impl;
 
 import com.plexus.directory.domain.error.StatusException;
+import com.plexus.directory.domain.model.request.DeviceRequest;
 import com.plexus.directory.domain.model.request.EmployeeRequest;
 import com.plexus.directory.domain.model.response.EmployeePageResponse;
 import com.plexus.directory.domain.model.response.EmployeeResponse;
@@ -120,6 +121,5 @@ public class AgendaFacadeImpl implements AgendaFacade {
 
         return new ValidationEmployeesResult(validEmployees, errors);
     }
-
     private record ValidationEmployeesResult(List<EmployeeRequest> validEmployees, Map<String, Object> errors) { }
 }
