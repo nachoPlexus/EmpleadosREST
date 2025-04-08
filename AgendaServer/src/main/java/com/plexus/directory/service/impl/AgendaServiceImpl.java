@@ -102,33 +102,40 @@ public class AgendaServiceImpl implements AgendaService {
         List<EmployeeDto> employeesToUpdate = new ArrayList<>();
         List<EmployeeDto> employeesToDelete = new ArrayList<>();
         List<DeviceDto> devicesToUnlink = new ArrayList<>();
-        List<DeviceDto> devicesToAdd= new ArrayList<>();
-        for (EmployeeRequest er: employeeRequests){
-            if (er.isDeleteEmployee()){
+        List<DeviceDto> devicesToAdd = new ArrayList<>();
+
+        for (EmployeeRequest er : employeeRequests) {
+            if (er.isDeleteEmployee()) {
                 employeesToDelete.add(employeeMapper.toDto(er));
                 er.setDeleteAssignedDevice(true);
-            }else {
+            } else {
                 employeesToUpdate.add(employeeMapper.toDto(er));
             }
-            if (er.isDeleteAssignedDevice()){
-                try{
-                    DeviceDto deviceDto=deviceRepository.getAssignation(er.getId()); deviceDto.setAssignedTo(-1);
+
+            if (er.isDeleteAssignedDevice()) {
+                try {
+                    DeviceDto deviceDto = deviceRepository.getAssignation(er.getId());
+                    deviceDto.setAssignedTo(-1);
                     devicesToUnlink.add(deviceDto);
-                }catch (Exception e){
-                    throw new StatusException(Map.of("DeletingAssignedDeviceError",
-                            "There was an error while trying to delete the assigned device for the employee"+er+", nothing was done.",
-                            "Details",e.getMessage()));
+                } catch (Exception e) {
+                    throw new StatusException(Map.of(
+                            "DeletingAssignedDeviceError",
+                            "Error al eliminar la asignación del dispositivo para el empleado " + er,
+                            "Details", e.getMessage()
+                    ));
                 }
-            }else if (er.getAssignedDevice()!=null){
+            } else if (er.getAssignedDevice() != null) {
                 devicesToAdd.add(deviceMapper.toDto(er.getAssignedDevice()));
             }
         }
-        if (deviceRepository.update(devicesToUnlink)+
-            employeeRepository.update(employeesToUpdate)+
-            employeeRepository.delete(employeesToDelete)+
-            deviceRepository.save(devicesToAdd)==4)
-            return "ok";
-        return "mal";
+
+        employeeRepository.delete(employeesToDelete);
+        deviceRepository.update(devicesToUnlink);
+        employeeRepository.update(employeesToUpdate);
+        deviceRepository.save(devicesToAdd);
+        return "ok";
     }
-    private record EmployeeDevicePair(Integer employeeId, DeviceDto device) {}
+
+    private record EmployeeDevicePair(Integer employeeId, DeviceDto device) {
+    }
 }

@@ -2,10 +2,12 @@ package com.plexus.directory.domain.error;
 
 import java.util.Map;
 
+
 public class StatusException extends RuntimeException {
     private final Map<String, Object> details;
 
     public StatusException(Map<String, Object> details) {
+        super();
         this.details = details;
     }
 

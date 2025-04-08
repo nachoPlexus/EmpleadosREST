@@ -49,13 +49,13 @@ public class AgendaController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createDevices( @RequestBody List<EmployeeRequest> employeeRequests) {
-        return facade.createEmployees(employeeRequests);
+    public ResponseEntity<String> add(@RequestBody List<EmployeeRequest> employeeRequests) {
+        return facade.add(employeeRequests);
     }
 
     @PutMapping
-    public ResponseEntity<String> updateDevices( @RequestBody List<EmployeeRequest> employeeRequests) {
-        return facade.updateEmployee(employeeRequests);
+    public ResponseEntity<String> update(@RequestBody List<EmployeeRequest> employeeRequests) {
+        return facade.update(employeeRequests);
     }
 
 }

@@ -20,6 +20,12 @@
         <lombok.version>1.18.34</lombok.version>
     </properties>
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.12.1</version>
+        </dependency>
         <!-- Spring Boot Starters (sin JPA) -->
 
 

@@ -13,6 +13,7 @@ public interface DeviceMapper {
     @Mapping(target = "model", source = "model")
     @Mapping(target = "os", source = "operatingSystem")
     DeviceDto toDto(DeviceRequest request);
+
     @Mapping(target = "deviceId", source = "id")
     @Mapping(target = "serialNumber", source = "serialNumber")
     @Mapping(target = "brand", source = "brand")

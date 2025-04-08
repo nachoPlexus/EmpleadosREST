@@ -123,44 +123,50 @@ public class DeviceRepositoryImpl implements DeviceRepository {
 
     @Override
     public int save(List<Device> devices) {
-        if (devices.isEmpty()) throw new StatusException(Map.of(UPDATING_ERROR, EMPTY_VALIDATED_DEVICES_LIST));
-        StringBuilder sql = buildConsultaAdd(devices);
+        if (!devices.isEmpty()) {
+            StringBuilder sql = buildConsultaAdd(devices);
 
-        try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
-            return stmt.executeUpdate(sql.toString());
-        } catch (SQLException e) {
-            if (e.getMessage().contains("UNIQUE")) {
-                throw new StatusException(Map.of("Error de constraint", "Hay campos que tienen que ser unicos y no lo son", "Detalle SQL", e.getMessage(), "Consejo", "verifica los devices que has enviados, comprueba que los datos los has introducido bien"));
+            try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
+                return stmt.executeUpdate(sql.toString());
+            } catch (SQLException e) {
+                if (e.getMessage().contains("UNIQUE")) {
+                    throw new StatusException(Map.of("Error de constraint", "Hay campos que tienen que ser unicos y no lo son", "Detalle SQL", e.getMessage(), "Consejo", "verifica los devices que has enviados, comprueba que los datos los has introducido bien"));
+                }
+                throw new StatusException(Map.of("Error en la inserción masiva", e.getMessage()));
             }
-            throw new StatusException(Map.of("Error en la inserción masiva", e.getMessage()));
         }
+        return 0;
     }
 
     @Override
     public int update(List<Device> devices) {
-        if (devices.isEmpty()) throw new StatusException(Map.of(UPDATING_ERROR, EMPTY_VALIDATED_DEVICES_LIST));
-        StringBuilder sql = buildConsultaUpdate(devices);
+        if (!devices.isEmpty()) {
+            StringBuilder sql = buildConsultaUpdate(devices);
 
-        try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
-            return stmt.executeUpdate(sql.toString());
-        } catch (SQLException e) {
-            if (e.getMessage().contains("UNIQUE")) {
-                throw new StatusException(Map.of("Error de constraint", "Hay campos que tienen que ser unicos y no lo son", "Detalle SQL", e.getMessage(), "Consejo", "verifica los devices que has enviados, comprueba que los datos los has introducido bien"));
+            try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
+                return stmt.executeUpdate(sql.toString());
+            } catch (SQLException e) {
+                if (e.getMessage().contains("UNIQUE")) {
+                    throw new StatusException(Map.of("Error de constraint", "Hay campos que tienen que ser unicos y no lo son", "Detalle SQL", e.getMessage(), "Consejo", "verifica los devices que has enviados, comprueba que los datos los has introducido bien"));
+                }
+                throw new StatusException(Map.of("Error en la update masiva", e.getMessage()));
             }
-            throw new StatusException(Map.of("Error en la update masiva", e.getMessage()));
         }
+        return 0;
     }
 
     @Override
     public int delete(List<Device> devices) {
-        if (devices.isEmpty()) throw new StatusException(Map.of(UPDATING_ERROR, EMPTY_VALIDATED_DEVICES_LIST));
-        StringBuilder sql = buildConsultaDelete(devices);
+        if (!devices.isEmpty()) {
+            StringBuilder sql = buildConsultaDelete(devices);
 
-        try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
-            return stmt.executeUpdate(sql.toString());
-        } catch (SQLException e) {
-            throw new StatusException(Map.of("Error en el borrado masivo", e.getMessage()));
+            try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
+                return stmt.executeUpdate(sql.toString());
+            } catch (SQLException e) {
+                throw new StatusException(Map.of("Error en el borrado masivo", e.getMessage()));
+            }
         }
+        return 0;
     }
 
 

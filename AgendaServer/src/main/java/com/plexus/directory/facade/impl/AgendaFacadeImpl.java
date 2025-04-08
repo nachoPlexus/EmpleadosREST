@@ -1,7 +1,6 @@
 package com.plexus.directory.facade.impl;
 
 import com.plexus.directory.domain.error.StatusException;
-import com.plexus.directory.domain.model.request.DeviceRequest;
 import com.plexus.directory.domain.model.request.EmployeeRequest;
 import com.plexus.directory.domain.model.response.EmployeePageResponse;
 import com.plexus.directory.domain.model.response.EmployeeResponse;
@@ -68,7 +67,7 @@ public class AgendaFacadeImpl implements AgendaFacade {
     }
 
     @Override
-    public ResponseEntity<String> createEmployees(List<EmployeeRequest> employeeRequests) {
+    public ResponseEntity<String> add(List<EmployeeRequest> employeeRequests) {
         ValidationEmployeesResult validationEmployeesResult = validateEmployeesList(employeeRequests);
         String result = service.createEmployee(validationEmployeesResult.validEmployees());
 
@@ -78,7 +77,7 @@ public class AgendaFacadeImpl implements AgendaFacade {
     }
 
     @Override
-    public ResponseEntity<String> updateEmployee(List<EmployeeRequest> employeeRequests) {
+    public ResponseEntity<String> update(List<EmployeeRequest> employeeRequests) {
         ValidationEmployeesResult validationEmployeesResult = validateEmployeesList(employeeRequests);
         String result = service.updateEmployee(validationEmployeesResult.validEmployees());
 

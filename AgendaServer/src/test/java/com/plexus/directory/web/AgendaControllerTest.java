@@ -91,7 +91,7 @@ class AgendaControllerTest {
 
     @Test
     void createEmployees_Success() throws Exception {
-        when(facade.createEmployees(employeeRequests)).thenReturn(ResponseEntity.status(201).body("Todos los employees creados con sus respectivos devices"));
+        when(facade.add(employeeRequests)).thenReturn(ResponseEntity.status(201).body("Todos los employees creados con sus respectivos devices"));
 
         mockMvc.perform(post("/agenda/employees")
                         .contentType("application/json")
@@ -99,12 +99,12 @@ class AgendaControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Todos los employees creados con sus respectivos devices"));
 
-        verify(facade).createEmployees(anyList());
+        verify(facade).add(anyList());
     }
 
     @Test
     void updateEmployees_Success() throws Exception {
-        when(facade.updateEmployee(employeeRequests)).thenReturn(ResponseEntity.status(201).body("Todos los employees actualizados con sus respectivos devices"));
+        when(facade.update(employeeRequests)).thenReturn(ResponseEntity.status(201).body("Todos los employees actualizados con sus respectivos devices"));
 
         mockMvc.perform(put("/agenda/employees")
                         .contentType("application/json")
@@ -112,6 +112,6 @@ class AgendaControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Todos los employees actualizados con sus respectivos devices"));
 
-        verify(facade).updateEmployee(anyList());
+        verify(facade).update(anyList());
     }
 }

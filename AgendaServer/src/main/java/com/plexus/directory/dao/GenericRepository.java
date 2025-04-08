@@ -15,15 +15,25 @@ import java.util.Map;
 @Repository
 @Profile("versionBase")
 public abstract class GenericRepository {
+
     protected <T> T safeApiCall(Call<T> call, Class<T> responseType) throws StatusException, DataBaseException, BadRequestException {
         try {
             Response<T> response = call.execute();
+            int code = response.code();
 
+            if (code == 207) {
+                String rawBody = response.errorBody() != null
+                        ? response.errorBody().string()
+                        : response.body() != null
+                        ? response.body().toString()
+                        : "Sin contenido en la respuesta";
+
+                handleErrorResponse(code, rawBody);
+            }
             if (!response.isSuccessful()) {
                 String errorBody = response.errorBody() != null ? response.errorBody().string() : "Error body vacío";
-                handleErrorResponse(response.code(), errorBody);
+                handleErrorResponse(code, errorBody);
             }
-
             if (response.body() == null) {
                 throw new NoContentException("La respuesta de la API fue nula");
             }
@@ -31,22 +41,25 @@ public abstract class GenericRepository {
             return response.body();
 
         } catch (IOException e) {
-            throw new StatusException(Map.of("Error en la comunicación con la API", e.getMessage() != null ? e.getMessage() : "Sin mensaje de error"));
+            throw new StatusException(Map.of(
+                    "Error en la comunicación con la API",
+                    e.getMessage() != null ? e.getMessage() : "Sin mensaje de error"));
         }
     }
 
-
-    private void handleErrorResponse(int statusCode, String errorBody) throws DataBaseException, BadRequestException, StatusException {
+    private void handleErrorResponse(int statusCode, String errorBody)
+            throws DataBaseException, BadRequestException, StatusException {
         switch (statusCode) {
-            case 400: // BAD REQUEST
+            case 400:
                 throw new BadRequestException(errorBody);
-
-            case 207: // MULTI STATUS
-                throw new StatusException(Map.of("status", "casi bien", "message", errorBody, "details", "Respuesta con múltiples estados"));
-
-            case 500: // INTERNAL SERVER ERROR
+            case 207:
+                throw new StatusException(Map.of(
+                        "status", "casi bien",
+                        "message", errorBody,
+                        "details", "Respuesta con múltiples estados"
+                ));
+            case 500:
                 throw new DataBaseException(errorBody);
-
             default:
                 throw new DataBaseException("Error no manejado. Código: " + statusCode + ", Mensaje: " + errorBody);
         }

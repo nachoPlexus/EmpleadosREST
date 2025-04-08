@@ -1,6 +1,5 @@
 package com.plexus.directory.facade.impl;
 
-import com.plexus.directory.domain.error.StatusException;
 import com.plexus.directory.domain.model.request.DeviceRequest;
 import com.plexus.directory.domain.model.request.EmployeeRequest;
 import com.plexus.directory.domain.model.response.EmployeePageResponse;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Validator;
 import org.springframework.web.servlet.View;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,10 +109,10 @@ class AgendaFacadeImplTest {
     }
 
     @Test
-    void updateEmployee_Failure() {
+    void update_Failure() {
         when(service.updateEmployee(employeeRequests)).thenReturn("error");
 
-        ResponseEntity<String> response = facade.updateEmployee(employeeRequests);
+        ResponseEntity<String> response = facade.update(employeeRequests);
 
         assertNotNull(response);
         assertEquals(500, response.getStatusCodeValue());
@@ -122,10 +120,10 @@ class AgendaFacadeImplTest {
     }
 
     @Test
-    void createEmployees_Failure() {
+    void add_Failure() {
         when(service.createEmployee(employeeRequests)).thenReturn("error");
 
-        ResponseEntity<String> response = facade.createEmployees(employeeRequests);
+        ResponseEntity<String> response = facade.add(employeeRequests);
 
         assertNotNull(response);
         assertEquals(500, response.getStatusCodeValue());
@@ -134,10 +132,10 @@ class AgendaFacadeImplTest {
 
 
     @Test
-    void createEmployees_Success() {
+    void add_Success() {
         when(service.createEmployee(validEmployeeRequests)).thenReturn("ok");
 
-        ResponseEntity<String> response = facade.createEmployees(validEmployeeRequests);
+        ResponseEntity<String> response = facade.add(validEmployeeRequests);
 
         assertNotNull(response);
         assertEquals(201, response.getStatusCodeValue());
@@ -146,10 +144,10 @@ class AgendaFacadeImplTest {
     }
 
     @Test
-    void updateEmployee_Success() {
+    void update_Success() {
         when(service.updateEmployee(validEmployeeRequests)).thenReturn("ok");
 
-        ResponseEntity<String> response = facade.updateEmployee(validEmployeeRequests);
+        ResponseEntity<String> response = facade.update(validEmployeeRequests);
 
         assertNotNull(response);
         assertEquals(201, response.getStatusCodeValue());

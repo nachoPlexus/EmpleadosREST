@@ -17,8 +17,8 @@ public interface AgendaFacade {
 
     ResponseEntity<EmployeeResponse> getEmployeeById(int employeeId) ;
 
-    ResponseEntity<String> createEmployees(List<EmployeeRequest> employeeRequests);
+    ResponseEntity<String> add(List<EmployeeRequest> employeeRequests);
 
-    ResponseEntity<String> updateEmployee(List<EmployeeRequest> employeeRequests) ;
+    ResponseEntity<String> update(List<EmployeeRequest> employeeRequests) ;
 
 }
