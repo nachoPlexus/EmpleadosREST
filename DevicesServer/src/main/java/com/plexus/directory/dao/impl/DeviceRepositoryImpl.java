@@ -143,13 +143,16 @@ public class DeviceRepositoryImpl implements DeviceRepository {
         if (!devices.isEmpty()) {
             StringBuilder sql = buildConsultaUpdate(devices);
 
-            try (Connection conn = DriverManager.getConnection(Constants.DBURL); Statement stmt = conn.createStatement()) {
+            try (Connection conn = DriverManager.getConnection(Constants.DBURL);
+                 Statement stmt = conn.createStatement()) {
                 return stmt.executeUpdate(sql.toString());
             } catch (SQLException e) {
                 if (e.getMessage().contains("UNIQUE")) {
                     throw new StatusException(Map.of("Error de constraint", "Hay campos que tienen que ser unicos y no lo son", "Detalle SQL", e.getMessage(), "Consejo", "verifica los devices que has enviados, comprueba que los datos los has introducido bien"));
                 }
                 throw new StatusException(Map.of("Error en la update masiva", e.getMessage()));
+            }catch (Exception e){
+                throw new DataBaseException("error inesperado, detalles"+e);
             }
         }
         return 0;
@@ -207,11 +210,11 @@ public class DeviceRepositoryImpl implements DeviceRepository {
     private StringBuilder buildConsultaUpdate(List<Device> devices) {
         StringBuilder sql = new StringBuilder("UPDATE devices SET ");
         try {
-            String[] strings = {"serial_number", "brand", "model", "os"};
+            String[] strings = {"brand", "model", "os"};
             for (String columna : strings) {
                 sql.append(columna).append(" = CASE ");
                 for (Device device : devices) {
-                    sql.append("WHEN id = ").append(device.getId()).append(" THEN '").append(device.getByNombreFila(columna)).append("' ");
+                    sql.append("WHEN serial_number = '").append(device.getSerialNumber()).append("' THEN '").append(device.getByNombreFila(columna)).append("' ");
                 }
                 sql.append("END, ");
             }
@@ -221,16 +224,16 @@ public class DeviceRepositoryImpl implements DeviceRepository {
                 sql.append(column).append(" = CASE ");
                 for (Device device : devices) {
                     int value = device.getAssignedTo();
-                    sql.append("WHEN id = ").append(device.getId()).append(" THEN ").append(value != 0 ? value : "NULL").append(" ");
+                    sql.append("WHEN serial_number = '").append(device.getSerialNumber()).append("' THEN ").append(value != 0 ? value : "NULL").append(" ");
                 }
                 sql.append("END, ");
             }
 
             sql.setLength(sql.length() - 2); //quito coma
-            sql.append(" WHERE id IN (");
-            devices.forEach(device -> sql.append(device.getId()).append(", "));
+            sql.append(" WHERE serial_number IN ('");
+            devices.forEach(device -> sql.append(device.getSerialNumber()).append(", "));
             sql.setLength(sql.length() - 2); //quito coma
-            sql.append(")");
+            sql.append("')");
         } catch (Exception e) {
             throw new StatusException(Map.of("Building Query error", "Error al generar la consulta masiva para eliminar a todos los devices", "Dettalles", e.getMessage()));
         }

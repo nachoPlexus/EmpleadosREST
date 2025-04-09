@@ -20,4 +20,5 @@ public interface DeviceMapper {
     @Mapping(target = "model", source = "model")
     @Mapping(target = "operatingSystem", source = "os")
     DeviceResponse toResponse(DeviceDto databaseDevice);
+
 }

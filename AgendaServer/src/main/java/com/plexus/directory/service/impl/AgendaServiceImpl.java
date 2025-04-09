@@ -12,6 +12,7 @@ import com.plexus.directory.domain.model.request.EmployeeRequest;
 import com.plexus.directory.domain.model.response.EmployeePageResponse;
 import com.plexus.directory.domain.model.response.EmployeeResponse;
 import com.plexus.directory.service.AgendaService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class AgendaServiceImpl implements AgendaService {
     private final EmployeeRepository employeeRepository;
@@ -36,24 +38,21 @@ public class AgendaServiceImpl implements AgendaService {
     @Override
     public EmployeePageResponse getEmployeesPaged(int page, int size) {
         EmployeePageResponse employees = employeeMapper.toResponse(employeeRepository.getAll(page, size));
-        employees.getEmployees().forEach(employeeResponse ->
-                employeeResponse.setAssignedDevice(deviceMapper.toResponse(deviceRepository.getAssignation(employeeResponse.getEmployeeId()))));
+        employees.getEmployees().forEach(employeeResponse -> employeeResponse.setAssignedDevice(deviceMapper.toResponse(deviceRepository.getAssignation(employeeResponse.getEmployeeId()))));
         return employees;
     }
 
     @Override
     public EmployeePageResponse getEmployeesByName(String employeeName, int resolvedPage, int resolvedSize) {
         EmployeePageResponse employees = employeeMapper.toResponse(employeeRepository.getByEmployeeName(employeeName, resolvedPage, resolvedSize));
-        employees.getEmployees().forEach(employeeResponse ->
-                employeeResponse.setAssignedDevice(deviceMapper.toResponse(deviceRepository.getAssignation(employeeResponse.getEmployeeId()))));
+        employees.getEmployees().forEach(employeeResponse -> employeeResponse.setAssignedDevice(deviceMapper.toResponse(deviceRepository.getAssignation(employeeResponse.getEmployeeId()))));
         return employees;
     }
 
     @Override
     public EmployeePageResponse getEmployeesBySurname(String employeeSurname, int resolvedPage, int resolvedSize) {
         EmployeePageResponse employees = employeeMapper.toResponse(employeeRepository.getByEmployeeSurname(employeeSurname, resolvedPage, resolvedSize));
-        employees.getEmployees().forEach(employeeResponse ->
-                employeeResponse.setAssignedDevice(deviceMapper.toResponse(deviceRepository.getAssignation(employeeResponse.getEmployeeId()))));
+        employees.getEmployees().forEach(employeeResponse -> employeeResponse.setAssignedDevice(deviceMapper.toResponse(deviceRepository.getAssignation(employeeResponse.getEmployeeId()))));
         return employees;
     }
 
@@ -71,9 +70,7 @@ public class AgendaServiceImpl implements AgendaService {
             throw new IllegalArgumentException("La lista de empleados no puede estar vacía");
         }
 
-        List<EmployeeDto> employeesToAdd = employeeRequests.stream()
-                .map(employeeMapper::toDto)
-                .toList();
+        List<EmployeeDto> employeesToAdd = employeeRequests.stream().map(employeeMapper::toDto).toList();
 
         List<Integer> employeeIds = employeeRepository.save(employeesToAdd);
         if (employeeIds.size() != employeesToAdd.size()) {
@@ -101,7 +98,7 @@ public class AgendaServiceImpl implements AgendaService {
     public String updateEmployee(List<EmployeeRequest> employeeRequests) {
         List<EmployeeDto> employeesToUpdate = new ArrayList<>();
         List<EmployeeDto> employeesToDelete = new ArrayList<>();
-        List<DeviceDto> devicesToUnlink = new ArrayList<>();
+        List<DeviceDto> devicesToUpdate = new ArrayList<>();
         List<DeviceDto> devicesToAdd = new ArrayList<>();
 
         for (EmployeeRequest er : employeeRequests) {
@@ -114,23 +111,30 @@ public class AgendaServiceImpl implements AgendaService {
 
             if (er.isDeleteAssignedDevice()) {
                 try {
-                    DeviceDto deviceDto = deviceRepository.getAssignation(er.getId());
-                    deviceDto.setAssignedTo(-1);
-                    devicesToUnlink.add(deviceDto);
+                    DeviceDto unlinkedDevice = deviceRepository.getAssignation(er.getId());
+                    unlinkedDevice.setAssignedTo(-1);
+                    devicesToUpdate.add(unlinkedDevice);
                 } catch (Exception e) {
-                    throw new StatusException(Map.of(
-                            "DeletingAssignedDeviceError",
-                            "Error al eliminar la asignación del dispositivo para el empleado " + er,
-                            "Details", e.getMessage()
-                    ));
+                    throw new StatusException(Map.of("DeletingAssignedDeviceError", "Error al eliminar la asignación del dispositivo para el empleado " + er, "Details", e.getMessage()));
                 }
             } else if (er.getAssignedDevice() != null) {
-                devicesToAdd.add(deviceMapper.toDto(er.getAssignedDevice()));
+                DeviceDto toAdd = deviceMapper.toDto(er.getAssignedDevice());
+                DeviceDto deviceDto = deviceRepository.getAssignation(er.getId());
+                if (deviceDto != null) {
+                    if (deviceDto.getSerialNumber() != null || deviceDto.getAssignedTo() == 0 || deviceDto.getAssignedTo() == 0 && deviceDto.getAssignedTo() != er.getId()) {
+                        log.info("Dispositivo ya asignado al empleado ID: " + deviceDto.getAssignedTo() + ", se procede a actualizarse");
+                        toAdd.setAssignedTo(er.getId());
+                        devicesToUpdate.add(toAdd);
+                    } else {
+                        toAdd.setAssignedTo(er.getId());
+                        devicesToAdd.add(toAdd);
+                    }
+                }
             }
         }
 
         employeeRepository.delete(employeesToDelete);
-        deviceRepository.update(devicesToUnlink);
+        deviceRepository.update(devicesToUpdate);
         employeeRepository.update(employeesToUpdate);
         deviceRepository.save(devicesToAdd);
         return "ok";

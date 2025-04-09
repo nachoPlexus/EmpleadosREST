@@ -5,11 +5,13 @@ import com.plexus.directory.dao.GenericRepository;
 import com.plexus.directory.dao.retrofit.llamadas.DevicesApi;
 import com.plexus.directory.domain.model.DeviceDto;
 import com.plexus.directory.domain.model.DevicePageDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Slf4j
 @Repository
 @Profile("versionBase")
 public class DeviceRepositoryImpl extends GenericRepository implements DeviceRepository {
@@ -31,29 +33,29 @@ public class DeviceRepositoryImpl extends GenericRepository implements DeviceRep
 
     @Override
     public DeviceDto getAssignation(int assignedEmployeeId) {
-        return safeApiCall(api.getDeviceByEmployeeId(assignedEmployeeId),DeviceDto.class);
+        return safeApiCall(api.getDeviceByEmployeeId(assignedEmployeeId), DeviceDto.class);
     }
 
     @Override
     public DevicePageDto get(String brand, int page, int size) {
-        return safeApiCall(api.getDevicesByBrand(brand, page, size),DevicePageDto.class);
+        return safeApiCall(api.getDevicesByBrand(brand, page, size), DevicePageDto.class);
     }
 
     @Override
     public int save(List<DeviceDto> devices) {
-        return safeApiCall(api.createDevices(devices),String.class)
-                .equals("Devices creados bien") ? -1 : 1 ;
+        return safeApiCall(api.createDevices(devices), String.class)
+                .equals("Devices creados bien") ? -1 : 1;
     }
 
     @Override
     public int update(List<DeviceDto> devices) {
-        return safeApiCall(api.updateDevices(devices),String.class)
-                .equals("Todos los devices actualizados bien") ? -1 : 1 ;
+        return safeApiCall(api.updateDevices(devices), String.class)
+                .equals("Todos los devices actualizados bien") ? -1 : 1;
     }
 
     @Override
     public int delete(List<DeviceDto> devices) {
-        return safeApiCall(api.deleteDevices(devices),String.class)
-                .equals("Devices borrados bien") ? -1 : 1 ;
+        return safeApiCall(api.deleteDevices(devices), String.class)
+                .equals("Devices borrados bien") ? -1 : 1;
     }
 }
